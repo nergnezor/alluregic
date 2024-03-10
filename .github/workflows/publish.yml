@@ -1,0 +1,17 @@
+on:
+  push:
+    paths:
+      - 'web/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - uses: manleydev/butler-publish-itchio-action@master
+      env:
+        BUTLER_CREDENTIALS: ${{ secrets.BUTLER_CREDENTIALS }}
+        ITCH_GAME: megalergik
+        ITCH_USER: nergnezor
+        PACKAGE: web
+        CHANNEL: html5
