@@ -22,7 +22,7 @@ jobs:
           channel: 'beta'
       - run: flutter pub get
       - run: flutter create --platforms web .
-      - run: flutter build web --release --web-renderer=canvaskit --base-href=/megalergik/
+      - run: flutter build web --release --web-renderer=canvaskit --base-href=/shadergame/
       
       - name: Setup Pages
         uses: actions/configure-pages@v3
@@ -33,3 +33,12 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2
+
+      - uses: manleydev/butler-publish-itchio-action@master
+        env:
+          BUTLER_CREDENTIALS: ${{ secrets.BUTLER_CREDENTIALS }}
+          ITCH_GAME: megalergik
+          ITCH_USER: nergnezor
+          PACKAGE: build/web
+          CHANNEL: html5
+
