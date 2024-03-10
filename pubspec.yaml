@@ -1,0 +1,20 @@
+name: shadergame
+description: Using a shader, simply.
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.1.0
+
+dependencies:
+  flame: ^1.10.1
+  flutter:
+    sdk: flutter
+  flutter_shaders: ^0.1.0
+  flame_forge2d: ^0.16.0
+flutter:
+  uses-material-design: true
+  shaders:
+    - shaders/player.frag
+    - shaders/enemy.frag
+    - shaders/bg.frag

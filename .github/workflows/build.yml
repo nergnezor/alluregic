@@ -1,0 +1,35 @@
+name: Gh-Pages
+
+on:
+  push:
+    branches:
+      - main
+  
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'beta'
+      - run: flutter pub get
+      - run: flutter create --platforms web .
+      - run: flutter build web --release --web-renderer=canvaskit --base-href /shadergame/
+      
+      - name: Setup Pages
+        uses: actions/configure-pages@v3
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v2
+        with:
+          path: 'build/web'
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2

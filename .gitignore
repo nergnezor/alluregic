@@ -1,0 +1,14 @@
+# Files and directories created by flutter create -platforms= [web, linux, windows, macos, android, ios]
+android/
+ios/
+linux/
+macos/
+web/
+windows/
+
+.dart_tool/
+
+.metadata
+*.iml
+pubspec.lock
+analysis_options.yaml
