@@ -33,6 +33,10 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2
+   
+      - name: Remove base tag from index.html
+        run: sed -i '/<base href=".*">/d' ./build/web/index.html
+
 
       - uses: manleydev/butler-publish-itchio-action@master
         env:
