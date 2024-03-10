@@ -12,3 +12,5 @@ windows/
 *.iml
 pubspec.lock
 analysis_options.yaml
+test/widget_test.dart
+.idea
