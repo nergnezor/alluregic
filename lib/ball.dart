@@ -26,7 +26,6 @@ class Ball extends BodyComponent with ContactCallbacks {
 
   @override
   Future<void> onLoad() async {
-    super.onLoad();
     final shaderName = isFirstBall ? 'player' : 'enemy';
 
     _program = await FragmentProgram.fromAsset('shaders/$shaderName.frag');
@@ -34,11 +33,12 @@ class Ball extends BodyComponent with ContactCallbacks {
 
     _position.y = -game.camera.visibleWorldRect.height / 2 * 0.8;
     _position.x =
-        isFirstBall ? -game.camera.visibleWorldRect.width / 2 * 0.8 : 0;
+        Random().nextDouble() * game.camera.visibleWorldRect.width / 2;
 
     if (isFirstBall) {
       first = this;
     }
+    super.onLoad();
   }
 
   @override
