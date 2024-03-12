@@ -49,19 +49,17 @@ class Ball extends BodyComponent with ContactCallbacks {
   Body createBody() {
     final shape = CircleShape();
     shape.radius = radius;
-
-    final fixtureDef = FixtureDef(
-      shape,
-      restitution: isNoseHole ? 0.1 : 0.0,
-      friction: 0.2,
-      density: 1,
-    );
+    final fixtureDef = FixtureDef(shape,
+        restitution: isNoseHole ? 0.1 : 0.0,
+        friction: 0,
+        density: 0,
+        isSensor: isNoseHole);
 
     const size = MouseJointWorld.gameSize;
     final bodyDef = BodyDef(
       userData: this,
       position: offset ?? Vector2(Random().nextDouble() * size / 2, -size / 2),
-      type: isNoseHole ? BodyType.kinematic : BodyType.dynamic,
+      type: isNoseHole ? BodyType.static : BodyType.dynamic,
     );
 
     return world.createBody(bodyDef)..createFixture(fixtureDef);
@@ -144,7 +142,13 @@ class Ball extends BodyComponent with ContactCallbacks {
     }
 
     if (!isNoseHole && other is Ball && other.isNoseHole) {
-      print('Ball hit');
+      final distance = (other.body.position - body.position).length;
+      print('Ball hit. Distance: $distance');
+      // if (distance < 1) {
+      die();
+      // }
+      // do nothing
+      return;
       final lifeDrain = 10 * pow(force.length, 1.2) / explodeForce;
       life -= lifeDrain.round();
       // grow(lifeDrain / 100);

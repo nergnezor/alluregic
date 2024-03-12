@@ -65,9 +65,9 @@ class MouseJointWorld extends Forge2DWorld
     final boundaries = createBoundaries(game);
     addAll(boundaries);
 
-    final noseHoleLeft = Ball(isNoseHole: true, offset: Vector2(-2, 0));
+    final noseHoleLeft = Ball(isNoseHole: true, offset: Vector2(-1, 1));
     add(noseHoleLeft);
-    final noseHoleRight = Ball(isNoseHole: true, offset: Vector2(2, 0));
+    final noseHoleRight = Ball(isNoseHole: true, offset: Vector2(1, 1));
     add(noseHoleRight);
 
     // add(nose);
@@ -124,11 +124,11 @@ class MouseJointWorld extends Forge2DWorld
   @override
   void render(Canvas canvas) {
     final canvasSize = game.size;
-    // final rect = game.camera.visibleWorldRect;
-    final rect = Rect.fromLTWH(
+    var rect = Rect.fromLTWH(
         -canvasSize.x, -canvasSize.y, canvasSize.x * 2, canvasSize.y * 2);
-    if (rect.isEmpty) {
-      return;
+
+    if (rect.hasNaN) {
+      rect = game.camera.visibleWorldRect;
     }
 
     shader
@@ -138,7 +138,7 @@ class MouseJointWorld extends Forge2DWorld
       ..setFloat(3, noseRadius);
 
     canvas.drawRect(rect, Paint()..shader = shader);
-
+    super.render(canvas);
     // Draw a nose with the help of circles
     // final nose = Paint()
     //   ..color = Colors.white
