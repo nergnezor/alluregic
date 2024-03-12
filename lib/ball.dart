@@ -94,8 +94,6 @@ class Ball extends BodyComponent with ContactCallbacks {
       Future.delayed(Duration(milliseconds: 1), () {
         if (isNoseHole) {
           life -= 10;
-          // world.remove(lifeText);
-          // world.add(lifeText);
           reset();
         } else {
           world.remove(this);
@@ -103,27 +101,10 @@ class Ball extends BodyComponent with ContactCallbacks {
       });
     }
     if (life <= 0) {
-      // First spin the ball
-      // body.applyAngularImpulse(100);
       body.setActive(false);
-      // grow(dt * 10);
     }
-    // const growTime = 10.0;
-    // final balltypeRadius =
-    //     isFirstBall ? PinballDiameter / 2 : EnemyBallDiameter / 2;
-
-    // // Always grow enemies. Grow player if within growTime
-    // if (!isFirstBall || radius < balltypeRadius) {
-    //   grow(dt / growTime * balltypeRadius);
-    // }
-
-    // const explodeRadius = 10.0;
-    // if (radius > explodeRadius) {
-    //   die();
-    // }
   }
 
-  static const explodeForce = 100;
   @override
   void beginContact(Object other, Contact contact) {
 // Calculate impulse (force) on the ball
@@ -142,22 +123,27 @@ class Ball extends BodyComponent with ContactCallbacks {
     }
 
     if (!isNoseHole && other is Ball && other.isNoseHole) {
-      final distance = (other.body.position - body.position).length;
-      print('Ball hit. Distance: $distance');
-      die();
-      return;
-      final lifeDrain = 10 * pow(force.length, 1.2) / explodeForce;
-      life -= lifeDrain.round();
+      // slow down the ball
+      // Vector2 slowingForce = -body.linearVelocity.normalized() * 20;
+      // body.applyLinearImpulse(slowingForce);
+
+      // decrease velocity of the ball
+      final newSpeed = body.linearVelocity * 0.5;
+      // body.clearForces();
+      body.clearForces();
+      body.linearVelocity = newSpeed;
+      // body.gravityScale = Vector2.all(0.5);
+
+      const dieImpulseThreshold = 20;
+      if (force.length < dieImpulseThreshold) {
+        print('Ball hit. impulse: $force, life: $life');
+        die();
+      }
       // grow(lifeDrain / 100);
     }
 
     // Enemy - Flipper collision
-    if (!isNoseHole && other is Flipper) {
-      // final lifeDrain = 10 * force.length / explodeForce;
-      // first.life -= max(lifeDrain.round(), 1);
-      // life -= lifeDrain.round();
-      // grow(lifeDrain / 100);
-    }
+    if (!isNoseHole && other is Flipper) {}
     if (isNoseHole) {
       // print(other);
     }

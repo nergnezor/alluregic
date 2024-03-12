@@ -65,9 +65,9 @@ class MouseJointWorld extends Forge2DWorld
     final boundaries = createBoundaries(game);
     addAll(boundaries);
 
-    final noseHoleLeft = Ball(isNoseHole: true, offset: Vector2(-1, 1));
+    final noseHoleLeft = Ball(isNoseHole: true, offset: Vector2(-1.5, 1));
     add(noseHoleLeft);
-    final noseHoleRight = Ball(isNoseHole: true, offset: Vector2(1, 1));
+    final noseHoleRight = Ball(isNoseHole: true, offset: Vector2(1.5, 1));
     add(noseHoleRight);
 
     // add(nose);
