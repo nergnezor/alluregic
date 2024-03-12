@@ -26,7 +26,7 @@ class Ball extends BodyComponent with ContactCallbacks {
 
   @override
   Future<void> onLoad() async {
-    final shaderName = isFirstBall ? 'player' : 'enemy';
+    final shaderName = isFirstBall ? 'player' : 'player';
 
     _program = await FragmentProgram.fromAsset('shaders/$shaderName.frag');
     shader = _program.fragmentShader();
