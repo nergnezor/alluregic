@@ -1,10 +1,13 @@
 import 'dart:math';
 import 'dart:ui';
 import 'package:flame/components.dart';
+import 'package:flame/extensions.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flutter/material.dart';
+import 'package:shadergame/main.dart';
 import 'boundaries.dart';
 import 'flipper.dart';
+import 'nose.dart';
 
 class Ball extends BodyComponent with ContactCallbacks {
   late final FragmentProgram _program;
@@ -16,7 +19,6 @@ class Ball extends BodyComponent with ContactCallbacks {
   static late final Ball first;
   int life = 100;
   double time = 0;
-  Vector2 _position = Vector2(0, -10);
   Ball({this.isFirstBall = false}) {}
 
   void reset() {
@@ -30,10 +32,6 @@ class Ball extends BodyComponent with ContactCallbacks {
 
     _program = await FragmentProgram.fromAsset('shaders/$shaderName.frag');
     shader = _program.fragmentShader();
-
-    _position.y = -game.camera.visibleWorldRect.height / 2 * 0.8;
-    _position.x =
-        Random().nextDouble() * game.camera.visibleWorldRect.width / 2;
 
     if (isFirstBall) {
       first = this;
@@ -53,10 +51,10 @@ class Ball extends BodyComponent with ContactCallbacks {
       density: 1,
     );
 
+    const size = MouseJointWorld.gameSize;
     final bodyDef = BodyDef(
       userData: this,
-      // gravityOverride:
-      position: _position,
+      position: Vector2(Random().nextDouble() * size / 2, -size / 2),
       type: BodyType.dynamic,
     );
 
@@ -131,6 +129,12 @@ class Ball extends BodyComponent with ContactCallbacks {
     if (other is Wall) {
       other.paint.color = Colors.red;
       return;
+    }
+
+    if (other is Nose) {
+      print('Nose hit');
+      other.paint.color = Colors.red;
+      // return;
     }
 
     if (!isFirstBall && other is Ball && other.isFirstBall) {

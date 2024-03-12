@@ -4,8 +4,10 @@ import 'dart:ui';
 
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
+// import 'package:flame/experimental.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame/game.dart';
+import 'package:flame/palette.dart';
 import 'package:flame/text.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flutter/material.dart';
@@ -32,6 +34,7 @@ class MouseJointWorld extends Forge2DWorld
   double lastCreateBallTime = 0;
   double noseRadius = 2;
   late Ball ball;
+
   List<Flipper> flippers = List.generate(2, (index) => Flipper(index));
   List<Flipper> activeFlippers = [];
   PositionComponent camera = PositionComponent();
@@ -39,6 +42,10 @@ class MouseJointWorld extends Forge2DWorld
       TextComponent(text: "100", position: Vector2(30, 20));
   TextComponent debugText =
       TextComponent(text: "debug", position: Vector2(0, 40));
+
+  Shape get noseShape => CircleShape();
+
+  static const double gameSize = 18;
 
   @override
   void onGameResize(Vector2 gameSize) {
@@ -51,7 +58,7 @@ class MouseJointWorld extends Forge2DWorld
   @override
   Future<void> onLoad() async {
     // ..setFloat(0, time)
-    game.camera.viewfinder.visibleGameSize = Vector2.all(18);
+    game.camera.viewfinder.visibleGameSize = Vector2.all(gameSize);
     super.onLoad();
     final boundaries = createBoundaries(game);
     addAll(boundaries);
@@ -59,6 +66,11 @@ class MouseJointWorld extends Forge2DWorld
     ball = Ball(isFirstBall: true);
     // add(ball);
     addAll(flippers);
+
+    // final noseComponent = NoseComponent(Vector2(5, 5), 10 * noseRadius);
+    // add(noseComponent);
+    // final nose = Nose(Vector2(5, 5), Vector2(5, 5), strokeWidth: 10 * noseRadius);
+
     game.camera.viewport.add(FpsTextComponent());
     final style = TextStyle(color: Colors.red, fontSize: 24);
     final regular = TextPaint(style: style);
@@ -106,6 +118,9 @@ class MouseJointWorld extends Forge2DWorld
   @override
   void render(Canvas canvas) {
     final rect = game.camera.visibleWorldRect;
+    if (rect.isEmpty) {
+      return;
+    }
 
     shader
       ..setFloat(0, rect.width)
