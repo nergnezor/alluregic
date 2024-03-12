@@ -17,7 +17,7 @@ class Ball extends BodyComponent with ContactCallbacks {
   int life = 100;
   double time = 0;
   Vector2 _position = Vector2(0, -10);
-  Ball({this.isFirstBall = false}) {}
+  Ball({this.isFirstBall = true}) {}
 
   void reset() {
     world.destroyBody(body);
