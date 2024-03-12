@@ -144,10 +144,7 @@ class Ball extends BodyComponent with ContactCallbacks {
     if (!isNoseHole && other is Ball && other.isNoseHole) {
       final distance = (other.body.position - body.position).length;
       print('Ball hit. Distance: $distance');
-      // if (distance < 1) {
       die();
-      // }
-      // do nothing
       return;
       final lifeDrain = 10 * pow(force.length, 1.2) / explodeForce;
       life -= lifeDrain.round();
@@ -196,14 +193,14 @@ class Ball extends BodyComponent with ContactCallbacks {
       textRenderer: TextPaint(
           style: TextStyle(
         color: Colors.red,
-        fontSize: 4,
+        fontSize: 2,
       )),
     );
 
     world.add(text);
     // Remove the text after 2 seconds
 
-    Future.delayed(Duration(seconds: 2), () {
+    Future.delayed(Duration(milliseconds: 500), () {
       world.remove(text);
     });
   }
