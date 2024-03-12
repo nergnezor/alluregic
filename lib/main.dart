@@ -12,6 +12,7 @@ import 'package:flame/text.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shadergame/nose.dart';
 import 'flipper.dart';
 
 import 'ball.dart';
@@ -33,7 +34,8 @@ class MouseJointWorld extends Forge2DWorld
   double time = 0;
   double lastCreateBallTime = 0;
   double noseRadius = 2;
-  late Ball ball;
+  Ball? ball;
+  final Nose nose = Nose();
 
   List<Flipper> flippers = List.generate(2, (index) => Flipper(index));
   List<Flipper> activeFlippers = [];
@@ -63,8 +65,12 @@ class MouseJointWorld extends Forge2DWorld
     final boundaries = createBoundaries(game);
     addAll(boundaries);
 
-    ball = Ball(isFirstBall: true);
-    // add(ball);
+    final noseHoleLeft = Ball(isNoseHole: true, offset: Vector2(-2, 0));
+    add(noseHoleLeft);
+    final noseHoleRight = Ball(isNoseHole: true, offset: Vector2(2, 0));
+    add(noseHoleRight);
+
+    // add(nose);
     addAll(flippers);
 
     // final noseComponent = NoseComponent(Vector2(5, 5), 10 * noseRadius);
@@ -117,7 +123,10 @@ class MouseJointWorld extends Forge2DWorld
 
   @override
   void render(Canvas canvas) {
-    final rect = game.camera.visibleWorldRect;
+    final canvasSize = game.size;
+    // final rect = game.camera.visibleWorldRect;
+    final rect = Rect.fromLTWH(
+        -canvasSize.x, -canvasSize.y, canvasSize.x * 2, canvasSize.y * 2);
     if (rect.isEmpty) {
       return;
     }
@@ -144,9 +153,19 @@ class MouseJointWorld extends Forge2DWorld
   void update(double dt) {
     super.update(dt);
     time += dt;
-    lifeText.text = ball.life.toString();
     debugText.text = game.world.children.length.toString();
-
+    if (time - lastCreateBallTime > 5.0) {
+      lastCreateBallTime = time;
+      // Add new if not too many balls
+      if (game.world.children.length < 10) {
+        add(Ball());
+      }
+    }
+    if (ball == null) {
+      lifeText.text = "null";
+      return;
+    }
+    lifeText.text = ball!.life.toString();
 // // Move the camera up if the ball is at the top of the screen
 //     final screenYOffset =
 //         -ball.body.position.y - game.camera.visibleWorldRect.height / 2;
@@ -158,14 +177,6 @@ class MouseJointWorld extends Forge2DWorld
 //     } else if (camera.y < 0) {
 //       camera.y = 0;
 //     }
-
-    if (time - lastCreateBallTime > 5.0) {
-      lastCreateBallTime = time;
-      // Add new if not too many balls
-      if (game.world.children.length < 10) {
-        add(Ball());
-      }
-    }
   }
 
   void checkKeyEvent(KeyEvent event) {

@@ -17,7 +17,7 @@ class Flipper extends BodyComponent with ContactCallbacks {
   static const FlipperLength = 6.1;
   static const FlipperAngle = pi / 6; // 90 + 30 = 120 degrees
   static const RubberThickness = 0.4;
-  final speed = 10.0/2;
+  final speed = 8.0;
   double scale = 1.0;
 
   void activate() {
@@ -62,7 +62,6 @@ class Flipper extends BodyComponent with ContactCallbacks {
       position: _position,
       type: BodyType.kinematic,
     );
-
     return world.createBody(bodyDef)..createFixture(fixtureDef);
   }
 

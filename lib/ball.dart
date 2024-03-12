@@ -2,8 +2,10 @@ import 'dart:math';
 import 'dart:ui';
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
+import 'package:flame/game.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 import 'package:shadergame/main.dart';
 import 'boundaries.dart';
 import 'flipper.dart';
@@ -14,12 +16,19 @@ class Ball extends BodyComponent with ContactCallbacks {
   late final FragmentShader shader;
   static const PinballDiameter = 2.7; // (cm) = 27mm
   static const EnemyBallDiameter = 6.0;
+  Vector2? offset;
   double radius = 1;
-  final bool isFirstBall;
-  static late final Ball first;
+  final bool isNoseHole;
+  // static late final Ball first;
   int life = 100;
   double time = 0;
-  Ball({this.isFirstBall = false}) {}
+  Ball({this.isNoseHole = false, Vector2? offset}) {
+    radius = isNoseHole ? 1.1 : 1;
+    // body = createBody();
+    if (offset != null) {
+      this.offset = offset;
+    }
+  }
 
   void reset() {
     world.destroyBody(body);
@@ -28,14 +37,11 @@ class Ball extends BodyComponent with ContactCallbacks {
 
   @override
   Future<void> onLoad() async {
-    final shaderName = isFirstBall ? 'player' : 'player';
+    final shaderName = isNoseHole ? 'enemy' : 'player';
 
     _program = await FragmentProgram.fromAsset('shaders/$shaderName.frag');
     shader = _program.fragmentShader();
 
-    if (isFirstBall) {
-      first = this;
-    }
     super.onLoad();
   }
 
@@ -46,7 +52,7 @@ class Ball extends BodyComponent with ContactCallbacks {
 
     final fixtureDef = FixtureDef(
       shape,
-      restitution: isFirstBall ? 0.1 : 0.0,
+      restitution: isNoseHole ? 0.1 : 0.0,
       friction: 0.2,
       density: 1,
     );
@@ -54,8 +60,8 @@ class Ball extends BodyComponent with ContactCallbacks {
     const size = MouseJointWorld.gameSize;
     final bodyDef = BodyDef(
       userData: this,
-      position: Vector2(Random().nextDouble() * size / 2, -size / 2),
-      type: BodyType.dynamic,
+      position: offset ?? Vector2(Random().nextDouble() * size / 2, -size / 2),
+      type: isNoseHole ? BodyType.kinematic : BodyType.dynamic,
     );
 
     return world.createBody(bodyDef)..createFixture(fixtureDef);
@@ -88,7 +94,7 @@ class Ball extends BodyComponent with ContactCallbacks {
     if (body.position.y > game.camera.visibleWorldRect.height / 2) {
 // Add some delay before resetting the ball
       Future.delayed(Duration(milliseconds: 1), () {
-        if (isFirstBall) {
+        if (isNoseHole) {
           life -= 10;
           // world.remove(lifeText);
           // world.add(lifeText);
@@ -137,20 +143,21 @@ class Ball extends BodyComponent with ContactCallbacks {
       // return;
     }
 
-    if (!isFirstBall && other is Ball && other.isFirstBall) {
+    if (!isNoseHole && other is Ball && other.isNoseHole) {
+      print('Ball hit');
       final lifeDrain = 10 * pow(force.length, 1.2) / explodeForce;
       life -= lifeDrain.round();
       // grow(lifeDrain / 100);
     }
 
     // Enemy - Flipper collision
-    if (!isFirstBall && other is Flipper) {
+    if (!isNoseHole && other is Flipper) {
       // final lifeDrain = 10 * force.length / explodeForce;
       // first.life -= max(lifeDrain.round(), 1);
       // life -= lifeDrain.round();
       // grow(lifeDrain / 100);
     }
-    if (isFirstBall) {
+    if (isNoseHole) {
       // print(other);
     }
   }
@@ -168,7 +175,7 @@ class Ball extends BodyComponent with ContactCallbacks {
 
   void die() {
     var t;
-    if (isFirstBall) {
+    if (isNoseHole) {
       t = 'You died!';
       life = 100;
       reset();
