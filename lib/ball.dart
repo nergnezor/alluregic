@@ -11,7 +11,7 @@ class Ball extends BodyComponent with ContactCallbacks {
   late final FragmentShader shader;
   static const PinballDiameter = 2.7; // (cm) = 27mm
   static const EnemyBallDiameter = 6.0;
-  double radius = 0.5;
+  double radius = 1;
   final bool isFirstBall;
   static late final Ball first;
   int life = 100;
@@ -72,11 +72,11 @@ class Ball extends BodyComponent with ContactCallbacks {
       ..setFloat(2, body.linearVelocity.x)
       ..setFloat(3, body.linearVelocity.y)
       ..setFloat(4, life / 100.0);
-
+    ;
     canvas
       ..drawCircle(
         Offset.zero,
-        max(radius, 1),
+        radius,
         Paint()..shader = shader,
       );
   }
