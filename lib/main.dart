@@ -24,7 +24,7 @@ void main() {
 
 class MouseJointExample extends Forge2DGame {
   MouseJointExample()
-      : super(world: MouseJointWorld(), gravity: Vector2(0, 50));
+      : super(world: MouseJointWorld(), gravity: Vector2(0, 60));
 }
 
 class MouseJointWorld extends Forge2DWorld
@@ -154,7 +154,7 @@ class MouseJointWorld extends Forge2DWorld
     super.update(dt);
     time += dt;
     debugText.text = game.world.children.length.toString();
-    if (time - lastCreateBallTime > 5.0) {
+    if (time - lastCreateBallTime > 2.0) {
       lastCreateBallTime = time;
       // Add new if not too many balls
       if (game.world.children.length < 10) {

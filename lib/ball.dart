@@ -1,11 +1,8 @@
 import 'dart:math';
 import 'dart:ui';
-import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
-import 'package:flame/game.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
 import 'package:shadergame/main.dart';
 import 'boundaries.dart';
 import 'flipper.dart';
@@ -49,11 +46,7 @@ class Ball extends BodyComponent with ContactCallbacks {
   Body createBody() {
     final shape = CircleShape();
     shape.radius = radius;
-    final fixtureDef = FixtureDef(shape,
-        restitution: isNoseHole ? 0.1 : 0.0,
-        friction: 0,
-        density: 0,
-        isSensor: isNoseHole);
+    final fixtureDef = FixtureDef(shape, friction: 1, isSensor: isNoseHole);
 
     const size = MouseJointWorld.gameSize;
     final bodyDef = BodyDef(
@@ -86,9 +79,8 @@ class Ball extends BodyComponent with ContactCallbacks {
   @override
   @mustCallSuper
   void update(double dt) {
-    super.update(dt);
-
     time += dt;
+    pushTowardNoseHoles();
     if (body.position.y > game.camera.visibleWorldRect.height / 2) {
 // Add some delay before resetting the ball
       Future.delayed(Duration(milliseconds: 1), () {
@@ -103,6 +95,7 @@ class Ball extends BodyComponent with ContactCallbacks {
     if (life <= 0) {
       body.setActive(false);
     }
+    // super.update(dt);
   }
 
   @override
@@ -123,18 +116,7 @@ class Ball extends BodyComponent with ContactCallbacks {
     }
 
     if (!isNoseHole && other is Ball && other.isNoseHole) {
-      // slow down the ball
-      // Vector2 slowingForce = -body.linearVelocity.normalized() * 20;
-      // body.applyLinearImpulse(slowingForce);
-
-      // decrease velocity of the ball
-      final newSpeed = body.linearVelocity * 0.5;
-      // body.clearForces();
-      body.clearForces();
-      body.linearVelocity = newSpeed;
-      // body.gravityScale = Vector2.all(0.5);
-
-      const dieImpulseThreshold = 20;
+      const dieImpulseThreshold = 2;
       if (force.length < dieImpulseThreshold) {
         print('Ball hit. impulse: $force, life: $life');
         die();
@@ -149,45 +131,54 @@ class Ball extends BodyComponent with ContactCallbacks {
     }
   }
 
-  // void grow(double amount) {
-  //   final shape = body.fixtures.first.shape as CircleShape;
-  //   final scale = 1 + amount;
-  //   shape.radius = shape.radius * scale;
-  //   if (isFirstBall && radius > PinballDiameter / 2) {
-  //     radius = PinballDiameter / 2;
-  //     shape.radius = radius;
-  //   }
-  //   radius = shape.radius;
-  // }
+  void grow(double amount) {
+    final shape = body.fixtures.first.shape as CircleShape;
+    final scale = 1 + amount;
+    shape.radius = shape.radius * scale;
+    // if (isFirstBall && radius > PinballDiameter / 2) {
+    //   radius = PinballDiameter / 2;
+    //   shape.radius = radius;
+    // }
+    radius = shape.radius;
+  }
 
   void die() {
-    var t;
-    if (isNoseHole) {
-      t = 'You died!';
-      life = 100;
-      reset();
-    } else {
-      t = 'BOOM';
-      world.remove(this);
+    // Shrink the ball until it disappears
+    final shrink = 0.1;
+    if (radius <= shrink) {
+      if (this.parent != null) {
+        this.parent!.remove(this);
+      }
+      return;
     }
-
-    // Display a message
-    final text = TextComponent(
-      text: t,
-      position: Vector2(0, 0),
-      anchor: Anchor.center,
-      textRenderer: TextPaint(
-          style: TextStyle(
-        color: Colors.red,
-        fontSize: 2,
-      )),
-    );
-
-    world.add(text);
-    // Remove the text after 2 seconds
-
-    Future.delayed(Duration(milliseconds: 500), () {
-      world.remove(text);
+    Future.delayed(Duration(milliseconds: 10), () {
+      grow(-shrink);
+      die();
     });
+  }
+
+  void pushTowardNoseHoles() {
+    if (isNoseHole) {
+      return;
+    }
+    // final noseHoles = world.components.whereType<Ball>().where((ball) => ball.isNoseHole);
+    final noseHoles =
+        world.children.whereType<Ball>().where((ball) => ball.isNoseHole);
+    for (final hole in noseHoles) {
+      final direction = hole.body.position - body.position;
+      final distance = direction.length;
+      if (distance < 0.5) {
+        die();
+        continue;
+      }
+      if (distance > 3) {
+        continue;
+      }
+      final force = direction.normalized() * 800 / (distance);
+      body.applyForce(force);
+
+      final speedFactor = min(1.0, distance / 2);
+      body.linearVelocity *= speedFactor;
+    }
   }
 }
