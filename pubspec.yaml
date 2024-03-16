@@ -18,3 +18,4 @@ flutter:
     - shaders/player.frag
     - shaders/enemy.frag
     - shaders/bg.frag
+    - shaders/eyes.frag

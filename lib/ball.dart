@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:shadergame/main.dart';
 import 'boundaries.dart';
 import 'flipper.dart';
-import 'nose.dart';
 
 class Ball extends BodyComponent with ContactCallbacks {
   late final FragmentProgram _program;
@@ -16,11 +15,16 @@ class Ball extends BodyComponent with ContactCallbacks {
   Vector2? offset;
   double radius = 1;
   final bool isNoseHole;
+  final bool isStatic;
   final bool isLeft;
   // static late final Ball first;
   int life = 100;
   double time = 0;
-  Ball({this.isNoseHole = false, this.isLeft = false, Vector2? offset}) {
+  Ball(
+      {this.isNoseHole = false,
+      this.isLeft = false,
+      this.isStatic = false,
+      Vector2? offset}) {
     // radius = isNoseHole ? 1.1 : 1;
     // body = createBody();
     if (offset != null) {
@@ -47,13 +51,13 @@ class Ball extends BodyComponent with ContactCallbacks {
   Body createBody() {
     final shape = CircleShape();
     shape.radius = radius;
-    final fixtureDef = FixtureDef(shape, friction: 1, isSensor: isNoseHole);
+    final fixtureDef = FixtureDef(shape, friction: 1, isSensor: isStatic);
 
     const size = MouseJointWorld.gameSize;
     final bodyDef = BodyDef(
       userData: this,
       position: offset ?? Vector2(Random().nextDouble() * size / 2, -size / 2),
-      type: isNoseHole ? BodyType.static : BodyType.dynamic,
+      type: isStatic ? BodyType.static : BodyType.dynamic,
     );
 
     return world.createBody(bodyDef)..createFixture(fixtureDef);
@@ -110,11 +114,6 @@ class Ball extends BodyComponent with ContactCallbacks {
     if (other is Wall) {
       other.paint.color = Colors.red;
       return;
-    }
-
-    if (other is Nose) {
-      other.paint.color = Colors.red;
-      // return;
     }
 
     if (!isNoseHole && other is Ball && other.isNoseHole) {

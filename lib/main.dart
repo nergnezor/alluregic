@@ -1,18 +1,14 @@
-import 'dart:math';
-// import 'dart:nativewrappers/_internal/vm/lib/core_patch.dart';
 import 'dart:ui';
 
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
-// import 'package:flame/experimental.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame/game.dart';
-import 'package:flame/palette.dart';
 import 'package:flame/text.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:shadergame/nose.dart';
+import 'package:shadergame/eyes.dart';
 import 'flipper.dart';
 
 import 'ball.dart';
@@ -35,7 +31,12 @@ class MouseJointWorld extends Forge2DWorld
   double lastCreateBallTime = 0;
   double noseRadius = 2;
   Ball? ball;
-  final Nose nose = Nose();
+  static const eyeYOffset = 5.0;
+  static const eyeDistance = 5.0;
+  final eyes = [
+    Eye(Vector2(-eyeDistance, eyeYOffset)),
+    Eye(Vector2(eyeDistance, eyeYOffset))
+  ];
 
   List<Flipper> flippers = List.generate(2, (index) => Flipper(index));
   List<Flipper> activeFlippers = [];
@@ -70,6 +71,8 @@ class MouseJointWorld extends Forge2DWorld
     add(noseHoleLeft);
     final noseHoleRight = Ball(isNoseHole: true, offset: Vector2(1.5, 1));
     add(noseHoleRight);
+
+    addAll(eyes);
 
     // add(nose);
     addAll(flippers);
@@ -155,10 +158,10 @@ class MouseJointWorld extends Forge2DWorld
     super.update(dt);
     time += dt;
     debugText.text = game.world.children.length.toString();
-    if (time - lastCreateBallTime > 2.0) {
+    if (time - lastCreateBallTime > 1.0) {
       lastCreateBallTime = time;
       // Add new if not too many balls
-      if (game.world.children.length < 10) {
+      if (game.world.children.length < 20) {
         add(Ball());
       }
     }

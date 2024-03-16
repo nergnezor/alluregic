@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "*.fbs": "groovy",
+        "*.frag": "c"
+    }
+}
