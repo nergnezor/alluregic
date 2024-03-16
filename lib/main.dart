@@ -65,7 +65,8 @@ class MouseJointWorld extends Forge2DWorld
     final boundaries = createBoundaries(game);
     addAll(boundaries);
 
-    final noseHoleLeft = Ball(isNoseHole: true, offset: Vector2(-1.5, 1));
+    final noseHoleLeft =
+        Ball(isNoseHole: true, isLeft: true, offset: Vector2(-1.5, 1));
     add(noseHoleLeft);
     final noseHoleRight = Ball(isNoseHole: true, offset: Vector2(1.5, 1));
     add(noseHoleRight);
@@ -166,6 +167,7 @@ class MouseJointWorld extends Forge2DWorld
       return;
     }
     lifeText.text = ball!.life.toString();
+
 // // Move the camera up if the ball is at the top of the screen
 //     final screenYOffset =
 //         -ball.body.position.y - game.camera.visibleWorldRect.height / 2;

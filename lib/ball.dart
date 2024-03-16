@@ -16,11 +16,12 @@ class Ball extends BodyComponent with ContactCallbacks {
   Vector2? offset;
   double radius = 1;
   final bool isNoseHole;
+  final bool isLeft;
   // static late final Ball first;
   int life = 100;
   double time = 0;
-  Ball({this.isNoseHole = false, Vector2? offset}) {
-    radius = isNoseHole ? 1.1 : 1;
+  Ball({this.isNoseHole = false, this.isLeft = false, Vector2? offset}) {
+    // radius = isNoseHole ? 1.1 : 1;
     // body = createBody();
     if (offset != null) {
       this.offset = offset;
@@ -68,6 +69,7 @@ class Ball extends BodyComponent with ContactCallbacks {
       ..setFloat(3, body.linearVelocity.y)
       ..setFloat(4, life / 100.0);
     ;
+
     canvas
       ..drawCircle(
         Offset.zero,
@@ -80,6 +82,7 @@ class Ball extends BodyComponent with ContactCallbacks {
   @mustCallSuper
   void update(double dt) {
     time += dt;
+    moveNoseHoles();
     pushTowardNoseHoles();
     if (body.position.y > game.camera.visibleWorldRect.height / 2) {
 // Add some delay before resetting the ball
@@ -95,7 +98,7 @@ class Ball extends BodyComponent with ContactCallbacks {
     if (life <= 0) {
       body.setActive(false);
     }
-    // super.update(dt);
+    super.update(dt);
   }
 
   @override
@@ -110,7 +113,6 @@ class Ball extends BodyComponent with ContactCallbacks {
     }
 
     if (other is Nose) {
-      print('Nose hit');
       other.paint.color = Colors.red;
       // return;
     }
@@ -118,7 +120,6 @@ class Ball extends BodyComponent with ContactCallbacks {
     if (!isNoseHole && other is Ball && other.isNoseHole) {
       const dieImpulseThreshold = 2;
       if (force.length < dieImpulseThreshold) {
-        print('Ball hit. impulse: $force, life: $life');
         die();
       }
       // grow(lifeDrain / 100);
@@ -180,5 +181,27 @@ class Ball extends BodyComponent with ContactCallbacks {
       final speedFactor = min(1.0, distance / 2);
       body.linearVelocity *= speedFactor;
     }
+  }
+
+  void moveNoseHoles() {
+    if (!isNoseHole) {
+      return;
+    }
+    // Nose sides
+    double noseSideRadius = 1;
+    // Vector2 noseSideOffsetR = Vector2(radius, radius / 2.0);
+    final xOffset = isLeft ? radius : -radius;
+    Vector2 offset = Vector2(xOffset, noseSideRadius / 2.0);
+
+    // Nose holes
+    double holeToSideRatio = 0.5 + 0.3 * pow(sin(time), 2.0);
+    double holeRadius = noseSideRadius * holeToSideRatio;
+
+    radius = holeRadius;
+// update body
+    final shape = body.fixtures.first.shape as CircleShape;
+    shape.radius = radius;
+    this.body = createBody();
+    position.xy = offset;
   }
 }

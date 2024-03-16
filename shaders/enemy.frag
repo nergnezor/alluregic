@@ -8,11 +8,11 @@ out vec4 fragColor;
 
 vec4 calculateColor(float center_distance, float radius, float time)
 {
-  if (center_distance > 0.99)
+  if (center_distance > radius)
   {
-    return vec4(1);
+    return vec4(0);
   }
-  return vec4(0.1 + 0.5 * life);
+  return vec4(1,0,0,0.5);
 }
 
 void main()
