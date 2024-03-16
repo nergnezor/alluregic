@@ -8,7 +8,7 @@ uniform vec2 speed;
 uniform float life;
 out vec4 fragColor;
 
-const vec4 backgroundColor = vec4(0.0, 0.0, 0.0, 0.1);
+const vec4 backgroundColor = vec4(0.1, 0.0, 0.1, 0.1);
 const vec4 holeColor = vec4(0.3, 0.1, 0.0, 0.5);
 const vec3 skinColor = vec3(0.9, 0.7, 0.6);
 

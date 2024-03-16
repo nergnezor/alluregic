@@ -37,14 +37,19 @@ vec4 mainImage(vec2 U, vec2 R) {
            0.1 * sin(0.4 * iTime) + 0.05 * sin(0.554 * iTime);
     U = ca(U);
 
-    Q += sin(1.5 * exp(-1e2 * r * r) * 1.4 * vec4(1, -1.8, 1.9, 4) + iTime);
+    // Q += sin(1.5 * exp(-1e2 * r * r) * 1.4 * vec4(1, -1.8, 1.9, 4) + iTime);
+    Q += sin(1.5 * exp(-1e2 * r * r) * 1.4 * vec4(1, -1.8, 1.9, 4) + 2 +
+             sin(iTime) * 4);
   }
   Q /= 18.;
   return Q;
 }
 
 void main() {
-  vec2 iResolution = vec2(radius, radius);
-  fragColor = mainImage(FlutterFragCoord().xy, iResolution.xy);
+  vec2 iResolution = vec2(radius * 1.5, radius * 3);
+  vec2 fragCoord = FlutterFragCoord().xy;
+  fragCoord.y += radius * 1;
+  fragCoord.x += radius * 0.5;
+  fragColor = mainImage(fragCoord, iResolution.xy);
   // fragColor = vec4(0.0, 0.0, 0.2, 1.0);
 }

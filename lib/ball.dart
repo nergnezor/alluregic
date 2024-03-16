@@ -78,6 +78,13 @@ class Ball extends BodyComponent with ContactCallbacks {
       ..setFloat(4, life / 100.0);
     ;
 
+    canvas.drawCircle(
+        Offset(0, 0),
+        radius,
+        Paint()
+          ..color = Colors.white24
+          ..style = PaintingStyle.stroke);
+
     canvas
       ..drawCircle(
         Offset.zero,
