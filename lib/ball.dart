@@ -201,7 +201,6 @@ class Ball extends BodyComponent with ContactCallbacks {
 // update body
     final shape = body.fixtures.first.shape as CircleShape;
     shape.radius = radius;
-    this.body = createBody();
     position.xy = offset;
   }
 }
