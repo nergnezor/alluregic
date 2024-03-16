@@ -187,20 +187,17 @@ class Ball extends BodyComponent with ContactCallbacks {
     if (!isNoseHole) {
       return;
     }
-    // Nose sides
-    double noseSideRadius = 1;
-    // Vector2 noseSideOffsetR = Vector2(radius, radius / 2.0);
-    final xOffset = isLeft ? radius : -radius;
-    Vector2 offset = Vector2(xOffset, noseSideRadius / 2.0);
 
-    // Nose holes
-    double holeToSideRatio = 0.5 + 0.3 * pow(sin(time), 2.0);
-    double holeRadius = noseSideRadius * holeToSideRatio;
+    final amount = pow(sin(time), 2.0);
+    radius = 0.7 + 0.2 * amount;
+    final xOffsetDistance = 1.0 + amount * 0.8;
+    final yOffset = 2.0 - amount;
+    final xOffset = isLeft ? xOffsetDistance : -xOffsetDistance;
+    final pos = Vector2(xOffset, yOffset);
 
-    radius = holeRadius;
 // update body
     final shape = body.fixtures.first.shape as CircleShape;
     shape.radius = radius;
-    position.xy = offset;
+    position.xy = pos;
   }
 }

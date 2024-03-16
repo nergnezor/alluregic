@@ -6,13 +6,11 @@ uniform vec2 speed;
 uniform float life;
 out vec4 fragColor;
 
+const vec4 holeColor = vec4(0,0,0,1);
+
 vec4 calculateColor(float center_distance, float radius, float time)
 {
-  if (center_distance > radius)
-  {
-    return vec4(0);
-  }
-  return vec4(1,0,0,0.5);
+  return holeColor;
 }
 
 void main()

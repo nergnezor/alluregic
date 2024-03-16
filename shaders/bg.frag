@@ -12,33 +12,7 @@ const vec4 backgroundColor = vec4(0.0, 0.0, 0.0, 0.1);
 const vec4 holeColor = vec4(0.3, 0.1, 0.0, 0.5);
 const vec3 skinColor = vec3(0.9, 0.7, 0.6);
 
-bool isHole(vec2 fragCoord, vec2 noseCenter, vec2 noseSideOffset,
-            float noseSideRadius, vec3 skinColor, out vec4 fragColor) {
-  // Nose holes
-  float holeToSideRatio = 0.5 + 0.3 * pow(sin(iTime), 2.0);
-  float holeRadius = noseSideRadius * holeToSideRatio;
-  vec2 holeOffsetR = vec2(noseSideOffset.x * holeToSideRatio,
-                          noseSideOffset.y / holeToSideRatio);
-  vec2 holeOffsetL = vec2(-noseSideOffset.x * holeToSideRatio,
-                          noseSideOffset.y / holeToSideRatio);
-  if (length(fragCoord - noseCenter - holeOffsetR) < holeRadius ||
-      length(fragCoord - noseCenter - holeOffsetL) < holeRadius) {
-    fragColor = holeColor;
-    return true;
-  }
-  return false;
-}
-
 bool drawEyes(out vec4 fragColor, in vec2 fragCoord) {
-  // const float eyeRadius = 0.1;
-  // const float eyeDistance = 0.3;
-  // const vec2 eyeCenter = vec2(-0.3, 0.3);
-  // vec2 eyeCoord = fragCoord - eyeCenter;
-  // float eyeDistanceFromCenter = length(eyeCoord);
-  // if (eyeDistanceFromCenter < eyeRadius)
-  // {
-  //     fragColor = vec4(0.8);
-  // }
   const float eyeRadius = 2.0;
   const float eyeDistance = eyeRadius * 3;
   const float pupilRadius = eyeRadius / 6;
@@ -84,10 +58,6 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
 
   // Nose center
   if (distance < radius) {
-    if (isHole(fragCoord, noseCenter, noseSideOffsetL, noseSideRadius,
-               skinColor, fragColor)) {
-      return;
-    }
     fragColor = vec4(skinColor, 1.0);
     return;
   }
@@ -95,10 +65,6 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
       length(fragCoord - noseCenter - noseSideOffsetL) < noseSideRadius ||
       length(fragCoord - noseCenter - noseSideOffsetR) < noseSideRadius;
   if (isNoseSide) {
-    if (isHole(fragCoord, noseCenter, noseSideOffsetL, noseSideRadius,
-               skinColor, fragColor)) {
-      return;
-    }
     fragColor = vec4(skinColor, 1.0);
     return;
   }
