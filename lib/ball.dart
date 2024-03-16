@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flame/extensions.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flutter/material.dart';
+import 'package:shadergame/eyes.dart';
 import 'package:shadergame/main.dart';
 import 'boundaries.dart';
 import 'flipper.dart';
@@ -39,7 +40,10 @@ class Ball extends BodyComponent with ContactCallbacks {
 
   @override
   Future<void> onLoad() async {
-    final shaderName = isNoseHole ? 'enemy' : 'player';
+    var shaderName = isNoseHole ? 'nose' : 'pollen';
+    if (this is Eye) {
+      shaderName = 'eye';
+    }
 
     _program = await FragmentProgram.fromAsset('shaders/$shaderName.frag');
     shader = _program.fragmentShader();

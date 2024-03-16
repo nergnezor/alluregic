@@ -40,7 +40,7 @@ bool drawEyes(out vec4 fragColor, in vec2 fragCoord) {
         fragColor = vec4(0.9, 0.2, 0.4, 1);
         return true;
       }
-      fragColor = vec4(1, 1, 1, 1);
+      fragColor = vec4(0.5, 0.5, 0.3, 1);
       return true;
     }
   }

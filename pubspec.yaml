@@ -15,7 +15,8 @@ dependencies:
 flutter:
   uses-material-design: true
   shaders:
-    - shaders/player.frag
-    - shaders/enemy.frag
+    - shaders/nose.frag
     - shaders/bg.frag
-    - shaders/eyes.frag
+    - shaders/eye.frag
+    - shaders/pollen.frag
+    - shaders/player.frag

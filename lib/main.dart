@@ -31,8 +31,8 @@ class MouseJointWorld extends Forge2DWorld
   double lastCreateBallTime = 0;
   double noseRadius = 2;
   Ball? ball;
-  static const eyeYOffset = 5.0;
-  static const eyeDistance = 5.0;
+  static const eyeYOffset = -5.0;
+  static const eyeDistance = 3.0;
   final eyes = [
     Eye(Vector2(-eyeDistance, eyeYOffset)),
     Eye(Vector2(eyeDistance, eyeYOffset))
