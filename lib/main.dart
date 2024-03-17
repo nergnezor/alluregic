@@ -46,7 +46,6 @@ class MouseJointWorld extends Forge2DWorld
   TextComponent debugText =
       TextComponent(text: "debug", position: Vector2(0, 40));
 
-
   static const double gameSize = 18;
 
   @override
@@ -124,22 +123,9 @@ class MouseJointWorld extends Forge2DWorld
 
   @override
   void render(Canvas canvas) {
-    final canvasSize = game.size;
-    var rect = Rect.fromLTWH(
-        -canvasSize.x, -canvasSize.y, canvasSize.x * 2, canvasSize.y * 2);
+    // final canvasSize = game.size;
 
-    if (rect.hasNaN) {
-      rect = game.camera.visibleWorldRect;
-    }
-
-    shader
-      ..setFloat(0, rect.width)
-      ..setFloat(1, rect.height)
-      ..setFloat(2, time)
-      ..setFloat(3, noseRadius);
-
-    canvas.drawRect(rect, Paint()..shader = shader);
-    super.render(canvas);
+    // super.render(canvas);
   }
 
   @override
@@ -151,7 +137,7 @@ class MouseJointWorld extends Forge2DWorld
       lastCreateBallTime = time;
       // Add new if not too many balls
       if (game.world.children.length < 20) {
-       add(Ball());
+        add(Ball());
       }
     }
     if (ball == null) {
@@ -159,7 +145,6 @@ class MouseJointWorld extends Forge2DWorld
       return;
     }
     lifeText.text = ball!.life.toString();
-
   }
 
   void checkKeyEvent(KeyEvent event) {
