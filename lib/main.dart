@@ -166,7 +166,7 @@ class MouseJointWorld extends Forge2DWorld
       lastCreateBallTime = time;
       // Add new if not too many balls
       if (game.world.children.length < 20) {
-        add(Ball());
+       // add(Ball());
       }
     }
     if (ball == null) {
