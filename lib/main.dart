@@ -46,7 +46,6 @@ class MouseJointWorld extends Forge2DWorld
   TextComponent debugText =
       TextComponent(text: "debug", position: Vector2(0, 40));
 
-  Shape get noseShape => CircleShape();
 
   static const double gameSize = 18;
 
@@ -60,7 +59,6 @@ class MouseJointWorld extends Forge2DWorld
 
   @override
   Future<void> onLoad() async {
-    // ..setFloat(0, time)
     game.camera.viewfinder.visibleGameSize = Vector2.all(gameSize);
     super.onLoad();
     final boundaries = createBoundaries(game);
@@ -76,14 +74,9 @@ class MouseJointWorld extends Forge2DWorld
         Ball(isNoseHole: true, isStatic: true, offset: Vector2(1.5, 1));
     add(noseHoleRight);
 
-    addAll(eyes);
+    //addAll(eyes);
 
-    // add(nose);
     addAll(flippers);
-
-    // final noseComponent = NoseComponent(Vector2(5, 5), 10 * noseRadius);
-    // add(noseComponent);
-    // final nose = Nose(Vector2(5, 5), Vector2(5, 5), strokeWidth: 10 * noseRadius);
 
     game.camera.viewport.add(FpsTextComponent());
     final style = TextStyle(color: Colors.red, fontSize: 24);
@@ -147,14 +140,6 @@ class MouseJointWorld extends Forge2DWorld
 
     canvas.drawRect(rect, Paint()..shader = shader);
     super.render(canvas);
-    // Draw a nose with the help of circles
-    // final nose = Paint()
-    //   ..color = Colors.white
-    //   ..style = PaintingStyle.stroke;
-    // canvas.drawCircle(Offset(0, 0), noseRadius, nose);
-    // canvas.drawCircle(Offset(noseRadius, noseRadius / 2), noseRadius / 2, nose);
-    // canvas.drawCircle(
-    //     Offset(-noseRadius, noseRadius / 2), noseRadius / 2, nose);
   }
 
   @override
@@ -175,17 +160,6 @@ class MouseJointWorld extends Forge2DWorld
     }
     lifeText.text = ball!.life.toString();
 
-// // Move the camera up if the ball is at the top of the screen
-//     final screenYOffset =
-//         -ball.body.position.y - game.camera.visibleWorldRect.height / 2;
-
-//     if (screenYOffset > 0) {
-//       camera.y -= screenYOffset * 2;
-//       camera.y = max(camera.y,
-//           ball.body.position.y + game.camera.visibleWorldRect.height / 2);
-//     } else if (camera.y < 0) {
-//       camera.y = 0;
-//     }
   }
 
   void checkKeyEvent(KeyEvent event) {
