@@ -57,12 +57,12 @@ float flare(in float angle, in float alpha, in float time) {
   return g;
 }
 
-#define SIZE 1
-#define RADIUS 0.1
-#define INNER_FADE 0.7
-#define OUTER_FADE rad
+// #define SIZE 1
+// #define RADIUS 0.1
+// #define INNER_FADE 0.7
+// #define OUTER_FADE rad
 #define SPEED 0.5
-#define BORDER 0.21
+// #define BORDER 0.51
 
 void mainImage(out vec4 fragColor, in vec2 fragCoord) {
   // vec2 uv = (fragCoord.xy - iResolution.xy * 0.5) / iResolution.y;
@@ -70,14 +70,15 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
   float f = .0;
   float f2 = .0;
   float t = iTime * SPEED;
-  float alpha = light(uv, radius * 2, radius / 20, radius / 2, radius / 4);
+  float alpha = light(uv, radius * 1, radius / 2, radius / 1, radius / 2);
   float angle = atan(uv.x, uv.y);
   float n = noise(vec2(uv.x * 20. + iTime, uv.y * 20. + iTime));
 
   float l = length(uv);
-  if (l < BORDER) {
+  fragColor = vec4(1.0, 0.0, 0.0, 1.0);
+  if (l < radius / 1) {
     t *= .8;
-    alpha = (1. - pow(((BORDER - l) / BORDER), 0.22) * 0.7);
+    alpha = (1. - pow(((radius / 1.2 - l) / radius / 0.2), 0.22) * 0.7);
     alpha = clamp(alpha - light(uv, 0.2, 0.0, 1.3, .7) * .55, .0, 1.);
     f = flare(angle * 1.0, alpha, -t * .5 + alpha);
     f2 = flare(angle * 1.0, alpha * 1.2, ((-t + alpha * .5 + 0.38134)));
