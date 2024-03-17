@@ -71,12 +71,12 @@ class Ball extends BodyComponent with ContactCallbacks {
   void renderCircle(Canvas canvas, Offset center, double radius) {
     // print(sin(game.currentTime()));
     shader
-      ..setFloat(0, time)
-      ..setFloat(1, radius)
-      ..setFloat(2, body.linearVelocity.x)
-      ..setFloat(3, body.linearVelocity.y)
-      ..setFloat(4, life / 100.0);
-    ;
+          ..setFloat(0, time)
+          ..setFloat(1, radius)
+        // ..setFloat(2, body.linearVelocity.x)
+        // ..setFloat(3, body.linearVelocity.y)
+        // ..setFloat(4, life / 100.0);
+        ;
 
     canvas.drawCircle(
         Offset(0, 0),
