@@ -27,6 +27,7 @@ class Eye extends Ball {
     shader
       ..setFloat(0, time)
       ..setFloat(1, radius);
+      return;
     canvas.drawCircle(Offset(0, 0), height, Paint()..shader = shader);
   }
 }
