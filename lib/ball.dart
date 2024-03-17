@@ -40,7 +40,7 @@ class Ball extends BodyComponent with ContactCallbacks {
 
   @override
   Future<void> onLoad() async {
-    var shaderName = isNoseHole ? 'nose' : 'pollen';
+    var shaderName = isNoseHole ? 'pollen' : 'nose';
     if (this is Eye) {
       shaderName = 'eye';
     }

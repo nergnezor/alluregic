@@ -70,13 +70,13 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
   float f = .0;
   float f2 = .0;
   float t = iTime * SPEED;
-  float alpha = light(uv, radius * 1, radius / 2, radius / 1, radius / 2);
+  // float alpha = light(uv, radius * 2, radius / 1, radius / 1, radius / 1);
+  float alpha = 0;
   float angle = atan(uv.x, uv.y);
   float n = noise(vec2(uv.x * 20. + iTime, uv.y * 20. + iTime));
 
   float l = length(uv);
-  fragColor = vec4(1.0, 0.0, 0.0, 1.0);
-  if (l < radius / 1) {
+  if (l < radius) {
     t *= .8;
     alpha = (1. - pow(((radius / 1.2 - l) / radius / 0.2), 0.22) * 0.7);
     alpha = clamp(alpha - light(uv, 0.2, 0.0, 1.3, .7) * .55, .0, 1.);
