@@ -80,7 +80,7 @@ class Ball extends BodyComponent with ContactCallbacks {
         Offset(0, 0),
         radius,
         Paint()
-          ..color = Colors.white;
+          ..color = Colors.white
           ..style = PaintingStyle.stroke);
 return;
     canvas
