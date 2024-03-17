@@ -69,10 +69,10 @@ class MouseJointWorld extends Forge2DWorld
         isStatic: true,
         isLeft: true,
         offset: Vector2(-1.5, 1));
-   // add(noseHoleLeft);
+    add(noseHoleLeft);
     final noseHoleRight =
         Ball(isNoseHole: true, isStatic: true, offset: Vector2(1.5, 1));
-    //add(noseHoleRight);
+    add(noseHoleRight);
 
     addAll(eyes);
 
