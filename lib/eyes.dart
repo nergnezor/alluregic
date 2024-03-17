@@ -25,10 +25,8 @@ class Eye extends Ball {
     // super.render(canvas);
     final iResolution = this.height;
     shader
-      ..setFloat(0, radius / 10)
-      ..setFloat(1, radius / 10)
-      ..setFloat(2, time);
-
+      ..setFloat(0, time)
+      ..setFloat(1, radius);
     canvas.drawCircle(Offset(0, 0), height, Paint()..shader = shader);
   }
 }
