@@ -69,11 +69,46 @@ class Ball extends BodyComponent with ContactCallbacks {
 
   @override
   void renderCircle(Canvas canvas, Offset center, double radius) {
+    if (isNoseHole) {
+      canvas.drawCircle(
+        center,
+        radius * 1.4,
+        Paint()..color = Color.fromARGB(255, 188, 87, 147),
+      );
+      canvas.drawCircle(
+        center,
+        radius * 1.2,
+        Paint()..color = Color.fromARGB(255, 64, 0, 147),
+      );
+      // Draw lines to the nose holes
+      final start = -position / 2 + Vector2(0, -2);
+      final end = position / 1.0 + Vector2(0, -2);
+      canvas.drawLine(
+        start.toOffset(),
+        end.toOffset(),
+        Paint()
+          ..color = Color.fromARGB(255, 103, 63, 169)
+          ..strokeWidth = 0.1,
+      );
+
+      // draw a soft shaped nose half
+      final nosePath = Path()
+        ..moveTo(start.x, start.y)
+        ..quadraticBezierTo(start.x, start.y - 1, end.x, end.y)
+        // ..quadraticBezierTo(end.x, end.y + 1, start.x, start.y)
+        ..quadraticBezierTo(start.x, start.y + 1, start.x, end.y);
+
+      canvas.drawPath(
+        nosePath,
+        Paint()
+          ..color = Color.fromARGB(255, 63, 98, 163)
+          ..style = PaintingStyle.fill,
+      );
+    }
     // print(sin(game.currentTime()));
     shader
-          ..setFloat(0, time)
-          ..setFloat(1, radius)
-        ;
+      ..setFloat(0, time)
+      ..setFloat(1, radius);
 
     canvas
       ..drawCircle(
@@ -87,6 +122,7 @@ class Ball extends BodyComponent with ContactCallbacks {
   @mustCallSuper
   void update(double dt) {
     time += dt;
+
     moveNoseHoles();
     pushTowardNoseHoles();
     if (body.position.y > game.camera.visibleWorldRect.height / 2) {

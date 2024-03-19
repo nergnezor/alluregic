@@ -48,6 +48,8 @@ class MouseJointWorld extends Forge2DWorld
 
   static const double gameSize = 18;
 
+  var noseOffset = Vector2(1.5, 1);
+
   @override
   void onGameResize(Vector2 gameSize) {
     // Reset game
@@ -63,14 +65,9 @@ class MouseJointWorld extends Forge2DWorld
     final boundaries = createBoundaries(game);
     addAll(boundaries);
 
-    final noseHoleLeft = Ball(
-        isNoseHole: true,
-        isStatic: true,
-        isLeft: true,
-        offset: Vector2(-1.5, 1));
+    final noseHoleLeft = Ball(isNoseHole: true, isStatic: true, isLeft: true);
     add(noseHoleLeft);
-    final noseHoleRight =
-        Ball(isNoseHole: true, isStatic: true, offset: Vector2(1.5, 1));
+    final noseHoleRight = Ball(isNoseHole: true, isStatic: true);
     add(noseHoleRight);
 
     addAll(eyes);
@@ -124,6 +121,11 @@ class MouseJointWorld extends Forge2DWorld
   @override
   void render(Canvas canvas) {
     // final canvasSize = game.size;
+    canvas.drawRect(
+        Rect.fromLTWH(-gameSize, -gameSize, gameSize * 2, gameSize * 2),
+        Paint()
+          ..color = Color.fromARGB(255, 72, 44, 77)
+          ..style = PaintingStyle.fill);
 
     // super.render(canvas);
   }
