@@ -19,4 +19,3 @@ flutter:
     - shaders/bg.frag
     - shaders/eye.frag
     - shaders/pollen.frag
-    - shaders/player.frag

@@ -61,7 +61,7 @@ float flare(in float angle, in float alpha, in float time) {
 // #define RADIUS 0.1
 // #define INNER_FADE 0.7
 // #define OUTER_FADE rad
-#define SPEED 0.5
+#define SPEED -5
 // #define BORDER 0.51
 
 void mainImage(out vec4 fragColor, in vec2 fragCoord) {
@@ -78,7 +78,7 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
   float l = length(uv);
   if (l < radius) {
     t *= .8;
-    alpha = (1. - pow(((radius / 1.2 - l) / radius / 0.2), 0.22) * 0.7);
+    alpha = (1. - pow(((radius / 1.0 - l) / radius / 0.2), 0.22) * 0.7);
     alpha = clamp(alpha - light(uv, 0.2, 0.0, 1.3, .7) * .55, .0, 1.);
     f = flare(angle * 1.0, alpha, -t * .5 + alpha);
     f2 = flare(angle * 1.0, alpha * 1.2, ((-t + alpha * .5 + 0.38134)));

@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:flame/components.dart';
@@ -132,7 +133,6 @@ class MouseJointWorld extends Forge2DWorld
 
   @override
   void update(double dt) {
-    super.update(dt);
     time += dt;
     debugText.text = game.world.children.length.toString();
     if (time - lastCreateBallTime > 1.0) {
@@ -142,11 +142,13 @@ class MouseJointWorld extends Forge2DWorld
         add(Ball());
       }
     }
-    if (ball == null) {
-      lifeText.text = "null";
-      return;
+
+    // End if out of eyes
+    final eyes = game.world.children.whereType<Eye>();
+    if (eyes.isEmpty) {
+      winGame();
     }
-    lifeText.text = ball!.life.toString();
+    super.update(dt);
   }
 
   void checkKeyEvent(KeyEvent event) {
@@ -165,5 +167,32 @@ class MouseJointWorld extends Forge2DWorld
     } else if (event is KeyUpEvent) {
       flipper.returnFlipper();
     }
+  }
+
+  void winGame() {
+    final style = TextStyle(color: Colors.red, fontSize: 200);
+    final regular = TextPaint(style: style);
+    final text = TextComponent(
+        text: "You win!",
+        position: Vector2(gameSize / 2, game.size.y / 2 - 100),
+        textRenderer: regular);
+    game.camera.viewport.add(text);
+    Future.delayed(const Duration(milliseconds: 100), () {
+      sleep(const Duration(seconds: 3));
+      reset();
+    });
+    Future.delayed(const Duration(seconds: 5), () {
+      game.camera.viewport.remove(text);
+    });
+  }
+
+  void reset() {
+    // game.world.children.clear();
+    // onLoad();
+    final eyes = [
+      Eye(Vector2(-eyeDistance, eyeYOffset)),
+      Eye(Vector2(eyeDistance, eyeYOffset))
+    ];
+    addAll(eyes);
   }
 }

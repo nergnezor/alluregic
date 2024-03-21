@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'dart:ui';
+import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flutter/material.dart';
@@ -40,7 +41,7 @@ class Ball extends BodyComponent with ContactCallbacks {
 
   @override
   Future<void> onLoad() async {
-    var shaderName = isNoseHole ? 'nose' : 'player';
+    var shaderName = isNoseHole ? 'nose' : 'pollen';
     if (this is Eye) {
       shaderName = 'eye';
     }
@@ -126,18 +127,17 @@ class Ball extends BodyComponent with ContactCallbacks {
     moveNoseHoles();
     pushTowardNoseHoles();
     if (body.position.y > game.camera.visibleWorldRect.height / 2) {
-// Add some delay before resetting the ball
-      Future.delayed(Duration(milliseconds: 1), () {
-        if (isNoseHole) {
-          life -= 10;
-          reset();
-        } else {
-          world.remove(this);
-        }
-      });
-    }
-    if (life <= 0) {
-      body.setActive(false);
+      world.remove(this);
+
+// Decrease the size of the largest eye
+      final eyes = world.children.whereType<Eye>();
+      if (eyes.isEmpty) {
+        return;
+      }
+      final largestEye = eyes.reduce((a, b) => a.radius > b.radius ? a : b);
+      if (largestEye.radius > Eye.MinRadius) {
+        largestEye.grow(-0.1);
+      }
     }
     super.update(dt);
   }
@@ -238,7 +238,7 @@ class Ball extends BodyComponent with ContactCallbacks {
       return;
     }
 
-    final amount = pow(sin(time), 2.0);
+    final amount = 2 * pow(sin(time), 2.0);
     radius = 0.7 + 0.2 * amount;
     final xOffsetDistance = 1.0 + amount * 0.8;
     final yOffset = 2.0 - amount;

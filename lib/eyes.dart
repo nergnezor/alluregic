@@ -4,9 +4,11 @@ import 'package:flame/components.dart';
 import 'package:shadergame/ball.dart';
 
 class Eye extends Ball {
+  static const MinRadius = 2.0;
   static const MaxRadius = 5.0;
+
   Eye(Vector2? offset) : super(isStatic: true, offset: offset) {
-    radius = 2.0;
+    radius = MinRadius;
   }
 
   @override
