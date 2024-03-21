@@ -173,10 +173,6 @@ class Ball extends BodyComponent with ContactCallbacks {
     final scale = 1 + amount;
     radius = shape.radius * scale;
     shape.radius = shape.radius * scale;
-    // if (isFirstBall && radius > PinballDiameter / 2) {
-    //   radius = PinballDiameter / 2;
-    //   shape.radius = radius;
-    // }
   }
 
   void die() {
@@ -191,15 +187,24 @@ class Ball extends BodyComponent with ContactCallbacks {
     }
     Future.delayed(Duration(milliseconds: 10), () {
       grow(-shrink);
+      die();
+
       // Grow the eye balls
       final eyes = world.children.whereType<Eye>();
+      if (eyes.isEmpty) {
+        return;
+      }
       final closestEye = eyes.reduce((a, b) =>
           (a.position - body.position).length <
                   (b.position - body.position).length
               ? a
               : b);
-      closestEye.grow(0.01);
-      die();
+
+      if (closestEye.radius > Eye.MaxRadius) {
+        closestEye.die();
+        return;
+      }
+      closestEye.grow(0.005);
     });
   }
 
