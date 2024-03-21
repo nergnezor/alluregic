@@ -188,7 +188,7 @@ vec4 mk_eye(in vec2 vUV, in float b, in float t) {
 }
 
 void mainImage2(out vec4 fragColor, in vec2 fragCoord) {
-  vec2 vUV = fragCoord.xy / vec2(radius / 0.12);
+  vec2 vUV = fragCoord.xy / vec2(radius / 0.24);
   vec4 eye = mk_eye(vUV, 3 - pow(sin(iTime), 0.1), iTime);
 
   fragColor = eye;
