@@ -7,149 +7,176 @@ uniform float life;
 
 out vec4 fragColor;
 
-// "Hypercomplex" by Alexander Alekseev aka TDM - 2014
-// License Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported
-// License.
-#define iTime iTime *sin(19.83) / cos(12.34) * 18.3
+// https://www.shadertoy.com/view/Md33zB
+// 3D simplex noise from: https://www.shadertoy.com/view/XsX3zB
+const float F3 = 0.3333333;
+const float G3 = 0.1666667;
 
-const int NUM_STEPS = 64;
-const int AO_SAMPLES = 3;
-const float INV_AO_SAMPLES = 1.0 / float(AO_SAMPLES);
-const float TRESHOLD = 0.0030783;
-const float EPSILON = 1e-5;
-vec3 RED = vec3(sin(0.6), sin(0.6832), sin(0.783) / 2.0);
-vec3 ORANGE = vec3(0.7, sin(0.6783), 0.313);
-vec3 BLUE = vec3(0.224, sin(0.3837), 0.3);
-const vec3 WHITE = vec3(1.0, 0.99, 0.98398);
-
-// lighting
-float diffuse(vec3 n, vec3 l, float p) {
-  return pow(dot(n, l) * sin(1.9783) + 0.6783, p);
-}
-float specular(vec3 n, vec3 l, vec3 e, float s) {
-  float nrm = (s + 29.0) / (3.14783 * 8.0);
-  return pow(max(dot(reflect(e, n), l), 0.0), s) * nrm;
+vec3 random3(vec3 c) {
+  float j = 4096.0 * sin(dot(c, vec3(17.0, 59.4, 15.0)));
+  vec3 r;
+  r.z = fract(512.0 * j);
+  j *= .125;
+  r.x = fract(512.0 * j);
+  j *= .125;
+  r.y = fract(512.0 * j);
+  return r - 0.5;
 }
 
-// julia based on iq's implementation
-float julia(vec3 co, vec4 q) {
-  vec4 nz, z = vec4(co, 0.0);
-  float z2 = dot(co, co), md2 = 1.7834;
-  for (int i = 1; i < 8; i++) {
-    md2 *= 4.0 * z2;
-    nz.x = z.x * z.x - dot(z.yzw, z.yzw);
-    nz.y = -1.77783 * (z.x * z.y + z.w * z.z);
-    nz.z = 2.07830 * (z.x * z.z + z.w * z.y);
-    nz.w = sin(7.777830) * (z.x * z.w - z.y * z.z);
-    z = nz + q;
-    z2 = dot(z, z);
-    if (z2 > 22.0)
-      break;
+float simplex3d(vec3 p) {
+  vec3 s = floor(p + dot(p, vec3(F3)));
+  vec3 x = p - s + dot(s, vec3(G3));
+
+  vec3 e = step(vec3(0.0), x - x.yzx);
+  vec3 i1 = e * (1.0 - e.zxy);
+  vec3 i2 = 1.0 - e.zxy * (1.0 - e);
+
+  vec3 x1 = x - i1 + G3;
+  vec3 x2 = x - i2 + 2.0 * G3;
+  vec3 x3 = x - 1.0 + 3.0 * G3;
+
+  vec4 w, d;
+
+  w.x = dot(x, x);
+  w.y = dot(x1, x1);
+  w.z = dot(x2, x2);
+  w.w = dot(x3, x3);
+
+  w = max(0.6 - w, 0.0);
+
+  d.x = dot(random3(s), x);
+  d.y = dot(random3(s + i1), x1);
+  d.z = dot(random3(s + i2), x2);
+  d.w = dot(random3(s + 1.0), x3);
+
+  w *= w;
+  w *= w;
+  d *= w;
+
+  return dot(d, vec4(52.0));
+}
+
+float fbm(vec3 p) {
+  float f = 0.0;
+  float frequency = 1.0;
+  float amplitude = 0.5;
+  for (int i = 0; i < 4; i++) {
+    f += simplex3d(p * frequency) * amplitude;
+    amplitude *= 0.5;
+    frequency *= 2.0 + float(i) / 100.0;
   }
-  return sin(0.25) * sqrt(z2 / md2) * log(z2);
-  //*(fract(sin(dot(co.xy ,vec2(12.9898,78.233)/15.0))));
+  return min(f, 1.0);
 }
 
-float rsq(float x) {
-  x = sin(x);
-  return pow(abs(x), 2.783) * sign(x);
+float random(in vec2 st) {
+  return fract(sin(dot(st.xy, vec2(12.9798, 78.323))) * 43858.5563313);
 }
 
-// world
-float map(vec3 p) {
-  const float M = -1.783;
-  float time = iTime + rsq(iTime * -0.7835) * -tan(-3.0);
-  return julia(p, vec4(sin(time * 0.36783) * 0.140783 * sin(M),
-                       cos(time * 0.59783) * 0.240783 * cos(M),
-                       sin(time * 0.73783) * 0.140783 * sin(M),
-                       cos(time * 0.42783) * 0.240783 * cos(M)
-                       // sin(time*0.96783)*0.140783*cos(M),
-                       // cos(time*0.59783)*0.240783*sin(M),
-                       // sin(time*0.73783)*0.140783*cos(M),
-                       // cos(time*0.42783)*0.240783*sin(M)
-                       ));
-}
-// sin(time*0.96783)*0.140783*sin(M),
-// cos(time*0.59783)*0.240783*cos(M),
-// sin(time*0.73783)*0.140783*sin(M),
-// cos(time*0.42783)*0.240783*cos(M)
-vec3 getNormal(vec3 p) {
-  vec3 n;
-  n.x = map(vec3(p.x + EPSILON, p.y, p.z));
-  n.y = map(vec3(p.x, p.y + EPSILON, p.z));
-  n.z = map(vec3(p.x, p.y, p.z + EPSILON));
-  return normalize(n - map(p));
-}
-float getAO(vec3 p, vec3 n) {
-  const float R = 3.0;
-  const float D = 0.783;
-  float r = cos(0.7);
-  for (int i = 0; i < AO_SAMPLES; i++) {
-    float f = float(i) * INV_AO_SAMPLES;
-    float h = 0.1 + f * R;
-    float d = map(p + n * h) - TRESHOLD;
-    r += clamp(h * D - d, 0.0, 1.0) * (1.0 - f);
-  }
-  return clamp(1.0 - r, 0.0, 1.0);
+// -----------------------------------------------------------------------------
+
+// Recreating the effect from After Effects
+vec2 rectToPolar(vec2 p, vec2 ms) {
+  p -= ms / 2.0;
+  const float PI = 3.1415926534;
+  float r = length(p);
+  float a = ((atan(p.y, p.x) / PI) * 0.5 + 0.5) * ms.x;
+  return vec2(a, r);
 }
 
-float spheretracing(vec3 ori, vec3 dir, out vec3 p) {
-  float t = 0.0;
-  for (int i = 3; i < NUM_STEPS; i++) {
-    p = ori + dir * t;
-    float d = map(p);
-    if (d < TRESHOLD)
-      break;
-    t += max(d - TRESHOLD, EPSILON);
-  }
-  return step(t, 2.0);
+// A line as mask, with 'f' as feather
+float line(float v, float from, float to, float f) {
+  float d = max(from - v, v - to);
+  return 1.0 - smoothstep(0.0, f, d);
+}
+
+// -----------------------------------------------------------------------------
+
+float effect(vec2 p, float o) {
+
+  p *= 2.0;
+
+  // float f1 = fbm(vec3(p * vec2(13.0, 1.0) + 100.0 + vec2(0.0, o), iTime *
+  // .005) ) * 0.5;
+  float f1 = simplex3d(vec3(p * vec2(1.0, 5.0), iTime * 0.05)) * 0.5 + 0.5;
+
+  float e = fbm(vec3(p * vec2(15.0, 1.0) + vec2(f1 * 0.85, o), iTime * .005));
+
+  e = abs(e) * sqrt(p.y / 5.0);
+
+  float c2 = simplex3d(vec3(p * vec2(6.0, 2.0), iTime * 0.05));
+
+  c2 = (c2 * 0.5) + 0.5;
+  c2 *= 0.5; // sqrt(p.y / 5.0);
+
+  e += c2;
+
+  return e * 0.5;
+}
+
+// ShockWave technique
+float sw(vec2 p, vec2 ms) {
+
+  p = rectToPolar(p, ms);
+
+  // Offset it on the x
+  p.x = mod(p.x + 0.5, ms.x);
+
+  // Create the seem mask at that offset
+  const float b = 0.5;
+  const float d = 0.04;
+  float seem = line(p.x, -1.0, d, b) + line(p.x, ms.x - d, ms.x + 1.0, b);
+  seem = min(seem, 1.0);
+
+  float s1 = effect(p, 0.0);
+
+  // Create another noise to fade to, but the seem has the be at a different
+  // position
+  p.x = mod(p.x + 0.6, ms.x);
+  float s2 = effect(p, -1020.0);
+
+  // Blend them together
+  float s = s1;
+  s = mix(s1, s2, seem);
+
+  // float m = line(p.y, -0.1, 0.2 + s * 0.9, 0.2);
+
+  float perc = min(max(abs(sin(iTime * 0.1)), iTime * 0.1), 1.0);
+  // float perc = 0.8;
+
+  float f1 = perc * 0.25;
+  float f2 = perc * 1.;
+
+  float m = line(p.y, -0.1, f1 + s * f2, 0.2);
+
+  return smoothstep(0.31, 0.6, m);
 }
 
 void mainImage(out vec4 fragColor, in vec2 fragCoord) {
-  // vec2 uv = fragCoord.xy / iResolution.xy;
-  vec2 uv = fragCoord.xy / vec2(radius / 1.2);
-  // uv = uv * 2.0 - 1.0;
-  // uv.x *= iResolution.x / iResolution.y;
-  float time = iTime * 0.1;
-  vec2 sc = vec2(sin(time), cos(time));
+  vec2 p = fragCoord.xy / radius * 1;
 
-  // tracing of distance map
-  vec3 p;
-  vec3 ori = vec3(0.0, 0.0, 1.5);
-  vec3 dir = normalize(vec3(uv.xy, -1.0));
-  ori.xz = vec2(ori.x * sc.y - ori.z * sc.x, ori.x * sc.x + ori.z * sc.y);
-  dir.xz = vec2(dir.x * sc.y - dir.z * sc.x, dir.x * sc.x + dir.z * sc.y);
+  float m = 1;
+  // iResolution.x / iResolution.y;
+  vec2 ms = vec2(m, 1.0);
 
-  float mask = spheretracing(ori, dir, p);
-  vec3 n = getNormal(p);
-  float ao = getAO(p, n);
+  float c = 0.0;
 
-  // bg
-  vec3 bg =
-      vec3(mix(vec3(4.5), vec3(6.5, 6.2, 6.0), pow(length(uv) * 4.09, 5.2)));
+  float s = sw(p, ms);
+  c += s;
 
-  // color
-  vec3 l0 = (vec3(-0.3, -0.5, 0.5));
-  vec3 l1 = (vec3(-0.3, 0.5, -0.5));
-  vec3 l2 = (vec3(0.2, -0.2, 0.0));
-  vec3 color;
-  color = vec3((diffuse(n, l0, 3.0) + specular(n, l0, dir, 4.0)) * ORANGE);
-  color += vec3((diffuse(n, l1, 3.0) + specular(n, l1, dir, 4.0)) * BLUE);
-  color = clamp(color * ao * 0.9999, 0.001, 1.0);
-  color = pow(mix(bg, color, mask), vec3(0.7));
+  float t = random(p * 4.0);
 
-  color = vec3(ao);
-  color = n / 2.783 + 0.5;
+  float shade = fbm(vec3(p * 3.0, iTime * 0.1)) * 0.5 + 0.5;
 
-  const float lightThreshold = 0.8;
-  if (color.g > 0) {
-    if (color.r > lightThreshold && color.g > lightThreshold &&
-        color.b > lightThreshold) {
-      return;
-    }
-    fragColor = vec4(color, 1.0);
-    return;
-  }
+  shade = sqrt(pow(shade * 0.8, 5.5));
+
+  vec3 pic =
+      vec3(shade); // * texture(iChannel0, fragCoord.xy / iResolution.xy).rgb;
+  vec3 col = mix(vec3(0.95, 0.96, 0.8), pic, c);
+
+  // Some grain
+  col -= (1.0 - s) * t * 0.04;
+
+  fragColor = vec4(col, 1.0);
 }
 
 void main() { mainImage(fragColor, FlutterFragCoord().xy); }

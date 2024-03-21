@@ -122,7 +122,7 @@ class Ball extends BodyComponent with ContactCallbacks {
   @override
   @mustCallSuper
   void update(double dt) {
-    time += dt;
+    time += dt * MouseJointWorld.timeFactor;
 
     moveNoseHoles();
     pushTowardNoseHoles();
@@ -137,6 +137,7 @@ class Ball extends BodyComponent with ContactCallbacks {
       final largestEye = eyes.reduce((a, b) => a.radius > b.radius ? a : b);
       if (largestEye.radius > Eye.MinRadius) {
         largestEye.grow(-0.1);
+        MouseJointWorld.timeFactor -= 0.1;
       }
     }
     super.update(dt);
@@ -145,27 +146,6 @@ class Ball extends BodyComponent with ContactCallbacks {
   @override
   void beginContact(Object other, Contact contact) {
 // Calculate impulse (force) on the ball
-    final speeds = [contact.bodyA.linearVelocity, contact.bodyB.linearVelocity];
-    final masses = [contact.bodyA.mass, contact.bodyB.mass];
-    final force = speeds[0] * masses[0] + speeds[1] * masses[1];
-    if (other is Wall) {
-      other.paint.color = Colors.red;
-      return;
-    }
-
-    if (!isNoseHole && other is Ball && other.isNoseHole) {
-      const dieImpulseThreshold = 2;
-      if (force.length < dieImpulseThreshold) {
-        die();
-      }
-      // grow(lifeDrain / 100);
-    }
-
-    // Enemy - Flipper collision
-    if (!isNoseHole && other is Flipper) {}
-    if (isNoseHole) {
-      // print(other);
-    }
   }
 
   void grow(double amount) {
@@ -205,6 +185,7 @@ class Ball extends BodyComponent with ContactCallbacks {
         return;
       }
       closestEye.grow(0.005);
+      MouseJointWorld.timeFactor += 0.005;
     });
   }
 
@@ -238,7 +219,7 @@ class Ball extends BodyComponent with ContactCallbacks {
       return;
     }
 
-    final amount = 2 * pow(sin(time), 2.0);
+    final amount = 2 * pow(sin(time), 2.0) + MouseJointWorld.timeFactor / 100;
     radius = 0.7 + 0.2 * amount;
     final xOffsetDistance = 1.0 + amount * 0.8;
     final yOffset = 2.0 - amount;

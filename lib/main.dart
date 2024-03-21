@@ -48,6 +48,7 @@ class MouseJointWorld extends Forge2DWorld
       TextComponent(text: "debug", position: Vector2(0, 40));
 
   static const double gameSize = 18;
+  static double timeFactor = 1;
 
   var noseOffset = Vector2(1.5, 1);
 
