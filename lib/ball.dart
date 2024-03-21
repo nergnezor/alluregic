@@ -56,7 +56,7 @@ class Ball extends BodyComponent with ContactCallbacks {
   Body createBody() {
     final shape = CircleShape();
     shape.radius = radius;
-    final fixtureDef = FixtureDef(shape, friction: 1, isSensor: isStatic);
+    final fixtureDef = FixtureDef(shape, friction: 1, isSensor: isNoseHole);
 
     const size = MouseJointWorld.gameSize;
     final bodyDef = BodyDef(
