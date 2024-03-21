@@ -177,18 +177,13 @@ class MouseJointWorld extends Forge2DWorld
         position: Vector2(gameSize / 2, game.size.y / 2 - 100),
         textRenderer: regular);
     game.camera.viewport.add(text);
-    Future.delayed(const Duration(milliseconds: 100), () {
-      sleep(const Duration(seconds: 3));
-      reset();
-    });
+    reset();
     Future.delayed(const Duration(seconds: 5), () {
       game.camera.viewport.remove(text);
     });
   }
 
   void reset() {
-    // game.world.children.clear();
-    // onLoad();
     final eyes = [
       Eye(Vector2(-eyeDistance, eyeYOffset)),
       Eye(Vector2(eyeDistance, eyeYOffset))
