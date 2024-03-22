@@ -59,9 +59,15 @@ class Ball extends BodyComponent with ContactCallbacks {
     final fixtureDef = FixtureDef(shape, friction: 1, isSensor: isStatic);
 
     const size = MouseJointWorld.gameSize;
+    var o = Vector2(size * (2 * (Random().nextDouble() - 0.5)), -size);
+    final minOffset = size / 2;
+    // Limit offset to minOffset
+    if (o.x.abs() < minOffset) {
+      o = o.normalized() * minOffset;
+    }
     final bodyDef = BodyDef(
       userData: this,
-      position: offset ?? Vector2(Random().nextDouble() * size / 2, -size / 2),
+      position: offset ?? o,
       type: isStatic ? BodyType.static : BodyType.dynamic,
     );
 
@@ -138,11 +144,11 @@ class Ball extends BodyComponent with ContactCallbacks {
     moveNoseHoles();
     // Move around eyes and nose holes
     if (isStatic) {
-      final t = time * MouseJointWorld.timeFactor * 2;
+      final t = time * MouseJointWorld.timeFactor * 10;
       if (isNoseHole) {
-        body.position.xy += Vector2(sin(t), cos(t)) * 0.01 * t;
+        body.position.xy += Vector2(sin(t), cos(t)) * 0.5;
       } else {
-        body.position.xy += Vector2(sin(t), cos(t)) * 0.001 * t;
+        body.position.xy += Vector2(sin(t), cos(t)) / 100;
       }
     }
 
