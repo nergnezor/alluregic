@@ -59,12 +59,13 @@ class Ball extends BodyComponent with ContactCallbacks {
     final fixtureDef = FixtureDef(shape, friction: 1, isSensor: isStatic);
 
     const size = MouseJointWorld.gameSize;
-    var o = Vector2(size * (2 * (Random().nextDouble() - 0.5)), -size);
-    final minOffset = size / 2;
-    // Limit offset to minOffset
-    if (o.x.abs() < minOffset) {
-      o = o.normalized() * minOffset;
+    var x = size*(Random().nextDouble() - 0.5)/2;
+    var y = -size;
+   
+    if (x < 0) {
+       x += size;
     }
+    final o = Vector2(x,y);
     final bodyDef = BodyDef(
       userData: this,
       position: offset ?? o,
