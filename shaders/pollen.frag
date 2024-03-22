@@ -4,7 +4,6 @@ uniform float iTime;
 uniform float radius;
 uniform vec2 speed;
 uniform float life;
-
 out vec4 fragColor;
 
 // https://www.shadertoy.com/view/Md33zB
@@ -119,7 +118,7 @@ float sw(vec2 p, vec2 ms) {
   p = rectToPolar(p, ms);
 
   // Offset it on the x
-  p.x = mod(p.x + 0.5, ms.x);
+  // p.x = mod(p.x + 0.5, ms.x);
 
   // Create the seem mask at that offset
   const float b = 0.5;
@@ -140,11 +139,11 @@ float sw(vec2 p, vec2 ms) {
 
   // float m = line(p.y, -0.1, 0.2 + s * 0.9, 0.2);
 
-  float perc = min(max(abs(sin(iTime * 0.1)), iTime * 0.1), 1.0);
-  // float perc = 0.8;
+  float perc = radius * 2 + sin(iTime * 10) / 20;
+  // float perc = radius;
 
-  float f1 = perc * 0.25;
-  float f2 = perc * 1.;
+  float f1 = perc * 1.8;
+  float f2 = perc * 0.5;
 
   float m = line(p.y, -0.1, f1 + s * f2, 0.2);
 
@@ -152,7 +151,9 @@ float sw(vec2 p, vec2 ms) {
 }
 
 void mainImage(out vec4 fragColor, in vec2 fragCoord) {
-  vec2 p = fragCoord.xy / radius * 1;
+  fragCoord.x += 0.13;
+  fragCoord.y += 0.12;
+  vec2 p = fragCoord.xy / vec2(radius / 4, radius / 4);
 
   float m = 1;
   // iResolution.x / iResolution.y;
@@ -165,7 +166,7 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
 
   float t = random(p * 4.0);
 
-  float shade = fbm(vec3(p * 3.0, iTime * 0.1)) * 0.5 + 0.5;
+  float shade = fbm(vec3(p * 3.0, 100 * iTime * 0.1)) * 0.5 + 0.5;
 
   shade = sqrt(pow(shade * 0.8, 5.5));
 
@@ -175,6 +176,14 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
 
   // Some grain
   col -= (1.0 - s) * t * 0.04;
+
+  // return if pixel is light
+  if (col.r + col.g + col.b > 1) {
+    return;
+  }
+
+  // colorize light green
+  col = mix(vec3(0.1, 0.6, 0.1), vec3(0.5, 1, 0.8), col.r + col.g + col.b);
 
   fragColor = vec4(col, 1.0);
 }

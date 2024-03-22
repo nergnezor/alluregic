@@ -185,7 +185,7 @@ class Ball extends BodyComponent with ContactCallbacks {
         return;
       }
       closestEye.grow(0.005);
-      MouseJointWorld.timeFactor += 0.005;
+      MouseJointWorld.timeFactor += 0.001;
     });
   }
 
