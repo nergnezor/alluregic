@@ -21,7 +21,7 @@ void main() {
 
 class MouseJointExample extends Forge2DGame {
   MouseJointExample()
-      : super(world: MouseJointWorld(), gravity: Vector2(0, 60));
+      : super(world: MouseJointWorld(), gravity: Vector2(0, 80));
 }
 
 class MouseJointWorld extends Forge2DWorld
