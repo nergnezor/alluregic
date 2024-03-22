@@ -165,6 +165,12 @@ vec4 mk_eyeball(in vec2 vUV, in float t) {
   float d = length(vUV);
   vec4 eyeball = vec4(0.0);
   vec4 sclera = mk_sclera(vUV, d, t);
+
+  // Redden eyeball when radius grows
+  for (int i = 1; i < 3; i++) {
+    sclera[i] /= radius / 2;
+  }
+
   vec4 retina = mk_retina(vUV, t + reliRamp(t, 2.0));
 
   eyeball = mix(eyeball, sclera, sclera.a);
