@@ -89,15 +89,26 @@ class Ball extends BodyComponent with ContactCallbacks {
         end.toOffset(),
         Paint()
           ..color = Color.fromARGB(255, 103, 63, 169)
-          ..strokeWidth = 0.1,
+          ..strokeWidth = 1
+          ..strokeCap = StrokeCap.round,
       );
 
       // draw a soft shaped nose half
+      // final nosePath = Path()
+      //   ..moveTo(start.x, start.y)
+      //   ..quadraticBezierTo(start.x, start.y - 1, end.x, end.y)
+      //   ..quadraticBezierTo(end.x, end.y + 1, start.x, start.y)
+      //   ..quadraticBezierTo(0, 0, 0, 0)
+      //   // ..quadraticBezierTo(start.x, start.y + 1, start.x, end.y)
+      //   // ..quadraticBezierTo(0, start.y + 1, start.x, end.y)
+      //   ..quadraticBezierTo(start.x, start.y - 1, end.x, end.y);
+
+      // Draw nose side spline
       final nosePath = Path()
         ..moveTo(start.x, start.y)
-        ..quadraticBezierTo(start.x, start.y - 1, end.x, end.y)
-        // ..quadraticBezierTo(end.x, end.y + 1, start.x, start.y)
-        ..quadraticBezierTo(start.x, start.y + 1, start.x, end.y);
+        ..quadraticBezierTo(start.x, start.y, start.x, start.y)
+        ..quadraticBezierTo(end.x, end.y, end.x, end.y)
+        ..quadraticBezierTo(start.x, end.y, start.x, end.y);
 
       canvas.drawPath(
         nosePath,
