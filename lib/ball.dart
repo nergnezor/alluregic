@@ -136,6 +136,16 @@ class Ball extends BodyComponent with ContactCallbacks {
     time += dt * MouseJointWorld.timeFactor;
 
     moveNoseHoles();
+    // Move around eyes and nose holes
+    if (isStatic) {
+      final t = time * MouseJointWorld.timeFactor * 2;
+      if (isNoseHole) {
+        body.position.xy += Vector2(sin(t), cos(t)) * 0.01 * t;
+      } else {
+        body.position.xy += Vector2(sin(t), cos(t)) * 0.001 * t;
+      }
+    }
+
     pushTowardNoseHoles();
     if (body.position.y > game.camera.visibleWorldRect.height / 2) {
       world.remove(this);
