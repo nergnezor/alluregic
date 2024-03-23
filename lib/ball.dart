@@ -63,10 +63,10 @@ class Ball extends BodyComponent with ContactCallbacks {
     var y = -size;
    
     if (x < 0) {
-       x += size;
+       x += size/2
     } else
     {
-      x-=size;
+      x-=size/2
     }
     final o = Vector2(x,y);
     final bodyDef = BodyDef(
