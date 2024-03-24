@@ -81,12 +81,12 @@ class Ball extends BodyComponent with ContactCallbacks {
   void renderCircle(Canvas canvas, Offset center, double radius) {
     if (isNoseHole) {
       canvas.drawArc(
-        Rect.fromCircle(center: center, radius: radius * 1.5),
+        Rect.fromCircle(center: center, radius: radius * 1.3),
         0.1 * position.x + pi,
         pi,
         false,
         Paint()
-          ..color = Color.fromARGB(255, 63, 98, 163)
+          ..color = Color.fromARGB(250, 60, 30, 100)
           ..style = PaintingStyle.stroke
           ..strokeWidth = 0.1,
       );

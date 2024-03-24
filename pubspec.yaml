@@ -9,6 +9,7 @@ environment:
 dependencies:
   flame: ^1.10.1
   flame_forge2d: ^0.17.0
+  flame_audio: ^2.1.0
   flutter:
     sdk: flutter
   flutter_shaders: ^0.1.0
@@ -19,3 +20,6 @@ flutter:
     - shaders/bg.frag
     - shaders/eye.frag
     - shaders/pollen.frag
+  assets:
+    - assets/audio/megalergik.mp3
+  

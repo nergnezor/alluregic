@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:ui';
 
 import 'package:flame/components.dart';
@@ -6,6 +5,7 @@ import 'package:flame/events.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame/game.dart';
 import 'package:flame/text.dart';
+import 'package:flame_audio/flame_audio.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -91,6 +91,9 @@ class MouseJointWorld extends Forge2DWorld
         HardwareKeyboardDetector(onKeyEvent: checkKeyEvent);
     add(keyboardDetector);
     game.camera.follow(camera, verticalOnly: true, snap: false, maxSpeed: 300);
+
+    // await FlameAudio.audioCache.load('megalergik.mp3');
+    FlameAudio.bgm.play('megalergik.mp3');
   }
 
   @override
@@ -137,6 +140,9 @@ class MouseJointWorld extends Forge2DWorld
     time += dt;
     debugText.text = game.world.children.length.toString();
     if (time - lastCreateBallTime > 1.0) {
+      if (timeFactor == 0) {
+        return;
+      }
       lastCreateBallTime = time;
       // Add new if not too many balls
       if (game.world.children.length < 20) {
@@ -146,7 +152,7 @@ class MouseJointWorld extends Forge2DWorld
 
     // End if out of eyes
     final eyes = game.world.children.whereType<Eye>();
-    if (eyes.isEmpty) {
+    if (eyes.isEmpty && timeFactor > 0) {
       winGame();
     }
     super.update(dt);
@@ -171,16 +177,22 @@ class MouseJointWorld extends Forge2DWorld
   }
 
   void winGame() {
-    final style = TextStyle(color: Colors.red, fontSize: 200);
+    final style = TextStyle(color: Colors.yellow[300], fontSize: 50);
     final regular = TextPaint(style: style);
     final text = TextComponent(
         text: "You win!",
-        position: Vector2(gameSize / 2, game.size.y / 2 - 100),
+        // Put text in the middle of the screen
+        // position: Vector2(gameSize / 2, game.size.y / 2 - 100),
+        position: game.camera.viewport.size / 2 - Vector2(100, 100),
         textRenderer: regular);
     game.camera.viewport.add(text);
-    reset();
-    Future.delayed(const Duration(seconds: 5), () {
+    timeFactor = 0;
+    time = 0;
+    lastCreateBallTime = 0;
+    Future.delayed(const Duration(seconds: 10), () {
       game.camera.viewport.remove(text);
+      timeFactor = 1;
+      reset();
     });
   }
 
