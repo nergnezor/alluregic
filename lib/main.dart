@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:flame/components.dart';
@@ -125,14 +126,13 @@ class MouseJointWorld extends Forge2DWorld
 
   @override
   void render(Canvas canvas) {
-    // final canvasSize = game.size;
-    canvas.drawRect(
-        Rect.fromLTWH(-gameSize, -gameSize, gameSize * 2, gameSize * 2),
-        Paint()
-          ..color = Color.fromARGB(255, 72, 44, 77)
-          ..style = PaintingStyle.fill);
-
-    // super.render(canvas);
+    // canvas.drawColor(Color.fromARGB(255, 72, 44, 77), BlendMode.srcOver);
+    var pos = Offset(0, -3);
+    final offset = sin(time * 0.5) * 0.5;
+    pos += Offset(offset, offset);
+    canvas.drawCircle(
+        pos, 10, Paint()..color = Color.fromARGB(255, 72, 44, 130));
+    super.render(canvas);
   }
 
   @override

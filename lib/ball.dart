@@ -131,7 +131,9 @@ class Ball extends BodyComponent with ContactCallbacks {
       final largestEye = eyes.reduce((a, b) => a.radius > b.radius ? a : b);
       if (largestEye.radius > Eye.MinRadius) {
         largestEye.grow(-0.1);
-        MouseJointWorld.timeFactor -= 0.1;
+        if (MouseJointWorld.timeFactor > 1.0) {
+          MouseJointWorld.timeFactor -= 0.1;
+        }
       }
     }
     // super.update(dt);

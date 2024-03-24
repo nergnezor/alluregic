@@ -183,7 +183,7 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
   }
 
   // colorize light green
-  col = mix(vec3(0.1, 0.6, 0.1), vec3(0.5, 1, 0.8), col.r + col.g + col.b);
+  col = mix(vec3(0.1, 0.3, 0.1), vec3(0.3, 1, 0.8), col.r + col.g + col.b);
 
   fragColor = vec4(col, 1.0);
 }
