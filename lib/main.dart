@@ -10,6 +10,7 @@ import 'package:flame_audio/flame_audio.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_shaders/flutter_shaders.dart';
 import 'package:shadergame/eyes.dart';
 import 'flipper.dart';
 
@@ -29,6 +30,8 @@ class MouseJointWorld extends Forge2DWorld
     with DragCallbacks, HasGameReference<Forge2DGame> {
   late final FragmentProgram program;
   late final FragmentShader shader;
+  late final FragmentShader faceShader;
+  late final FragmentProgram program2;
   double time = 0;
   double lastCreateBallTime = 0;
   double noseRadius = 2;
@@ -78,8 +81,11 @@ class MouseJointWorld extends Forge2DWorld
     addAll(flippers);
 
     game.camera.viewport.add(FpsTextComponent());
+
     program = await FragmentProgram.fromAsset('shaders/bg.frag');
     shader = program.fragmentShader();
+    program2 = await FragmentProgram.fromAsset('shaders/pollen.frag');
+    faceShader = program2.fragmentShader();
 
     final keyboardDetector =
         HardwareKeyboardDetector(onKeyEvent: checkKeyEvent);
@@ -120,12 +126,26 @@ class MouseJointWorld extends Forge2DWorld
   @override
   void render(Canvas canvas) {
     // Draw background gradient
-    canvas.drawColor(Color.fromARGB(255, 52, 24, 77), BlendMode.srcOver);
+    canvas.drawColor(Color.fromARGB(255, 20, 24, 30), BlendMode.srcOver);
+    shader
+      ..setFloat(0, time * 0.1)
+      ..setFloat(1, game.size.x / 100000)
+      ..setFloat(2, game.size.y / 150);
+    final canvasRect = canvas.getLocalClipBounds();
+    canvas.drawRect(canvasRect, Paint()..shader = shader);
     var pos = Offset(0, -3);
     final offset = sin(time * 0.5) * 0.5;
     pos += Offset(offset, offset);
+
+    // faceShader
+    //   ..setFloat(0, time / 10)
+    //   ..setFloat(1, 4)
+    //   ..setFloat(2, 3);
     canvas.drawCircle(
-        pos, 10, Paint()..color = Color.fromARGB(255, 72, 44, 130));
+        pos, 10, Paint()..color = Color.fromARGB(220, 72, 44, 130));
+    // pos,
+    // 10,
+    // Paint()..shader = faceShader);
     super.render(canvas);
   }
 

@@ -151,6 +151,7 @@ float sw(vec2 p, vec2 ms) {
 }
 
 void mainImage(out vec4 fragColor, in vec2 fragCoord) {
+
   fragCoord.x += 0.13;
   fragCoord.y += 0.12;
   vec2 p = fragCoord.xy / vec2(radius / 4, radius / 4);
@@ -183,7 +184,7 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
   }
 
   // colorize light green
-  col = mix(vec3(0.1, 0.3, 0.1), vec3(0.3, 1, 0.8), col.r + col.g + col.b);
+  col = mix(vec3(0.1, 0.6, 0.3), vec3(1, 1, 1), col.r + col.g + col.b);
 
   fragColor = vec4(col, 1.0);
 }
