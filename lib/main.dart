@@ -78,13 +78,6 @@ class MouseJointWorld extends Forge2DWorld
     addAll(flippers);
 
     game.camera.viewport.add(FpsTextComponent());
-    final style = TextStyle(color: Colors.red, fontSize: 24);
-    final regular = TextPaint(style: style);
-
-    game.camera.viewport.add(TextComponent(
-        text: "💛", position: Vector2(0, 20), textRenderer: regular));
-    game.camera.viewport.add(lifeText);
-    game.camera.viewport.add(debugText);
     program = await FragmentProgram.fromAsset('shaders/bg.frag');
     shader = program.fragmentShader();
 
@@ -126,7 +119,8 @@ class MouseJointWorld extends Forge2DWorld
 
   @override
   void render(Canvas canvas) {
-    // canvas.drawColor(Color.fromARGB(255, 72, 44, 77), BlendMode.srcOver);
+    // Draw background gradient
+    canvas.drawColor(Color.fromARGB(255, 52, 24, 77), BlendMode.srcOver);
     var pos = Offset(0, -3);
     final offset = sin(time * 0.5) * 0.5;
     pos += Offset(offset, offset);
