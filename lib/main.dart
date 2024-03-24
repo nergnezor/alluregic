@@ -8,6 +8,7 @@ import 'package:flame/game.dart';
 import 'package:flame/text.dart';
 import 'package:flame_audio/flame_audio.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_shaders/flutter_shaders.dart';
@@ -32,6 +33,7 @@ class MouseJointWorld extends Forge2DWorld
   late final FragmentShader shader;
   late final FragmentShader faceShader;
   late final FragmentProgram program2;
+  bool playingMusic = false;
   double time = 0;
   double lastCreateBallTime = 0;
   double noseRadius = 2;
@@ -93,11 +95,20 @@ class MouseJointWorld extends Forge2DWorld
     game.camera.follow(camera, verticalOnly: true, snap: false, maxSpeed: 300);
 
     // await FlameAudio.audioCache.load('megalergik.mp3');
-    FlameAudio.bgm.play('megalergik.mp3');
+    // if not web
+    if (!kIsWeb) {
+      FlameAudio.bgm.play('megalergik.mp3');
+      playingMusic = true;
+    }
   }
 
   @override
   void onDragStart(DragStartEvent info) {
+    if (!playingMusic) {
+      FlameAudio.bgm.play('megalergik.mp3');
+      playingMusic = true;
+    }
+
     super.onDragStart(info);
 
     // Choose flipper by side of the screen touched
