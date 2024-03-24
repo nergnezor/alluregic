@@ -137,26 +137,26 @@ class MouseJointWorld extends Forge2DWorld
   @override
   void render(Canvas canvas) {
     // Draw background gradient
-    canvas.drawColor(Color.fromARGB(255, 20, 24, 30), BlendMode.srcOver);
+    // canvas.drawColor(Color.fromARGB(255, 20, 24, 30), BlendMode.srcOver);
     shader
       ..setFloat(0, time * 0.1)
-      ..setFloat(1, game.size.x / 100000)
-      ..setFloat(2, game.size.y / 150);
+      ..setFloat(1, game.size.x / 300)
+      ..setFloat(2, game.size.y / 300);
     final canvasRect = canvas.getLocalClipBounds();
     canvas.drawRect(canvasRect, Paint()..shader = shader);
     var pos = Offset(0, -3);
-    final offset = sin(time * 0.5) * 0.5;
+    final offset = sin(time * 0.5) * 0.5 + sin(time * 10) * 0.1;
     pos += Offset(offset, offset);
 
-    // faceShader
-    //   ..setFloat(0, time / 10)
-    //   ..setFloat(1, 4)
-    //   ..setFloat(2, 3);
     canvas.drawCircle(
-        pos, 10, Paint()..color = Color.fromARGB(220, 72, 44, 130));
-    // pos,
-    // 10,
-    // Paint()..shader = faceShader);
+        pos, 10, Paint()..color = Color.fromARGB(190, 72, 44, 130));
+    canvas.drawCircle(
+        pos,
+        10,
+        Paint()
+          ..color = Color.fromARGB(120, 255, 255, 255)
+          ..strokeWidth = 0.03
+          ..style = PaintingStyle.stroke);
     super.render(canvas);
   }
 
@@ -164,7 +164,7 @@ class MouseJointWorld extends Forge2DWorld
   void update(double dt) {
     time += dt;
     debugText.text = game.world.children.length.toString();
-    if (time - lastCreateBallTime > 1.0) {
+    if (time - lastCreateBallTime > 5 / max(1, (1 + (10 * (timeFactor - 1))))) {
       if (timeFactor == 0) {
         return;
       }
