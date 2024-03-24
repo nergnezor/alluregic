@@ -137,7 +137,7 @@ class MouseJointWorld extends Forge2DWorld
   @override
   void render(Canvas canvas) {
     // Draw background gradient
-    // canvas.drawColor(Color.fromARGB(255, 20, 24, 30), BlendMode.srcOver);
+     canvas.drawColor(Color.fromARGB(255, 40, 24, 60), BlendMode.srcOver);
     shader
       ..setFloat(0, time * 0.1)
       ..setFloat(1, game.size.x / 300)
@@ -149,7 +149,7 @@ class MouseJointWorld extends Forge2DWorld
     pos += Offset(offset, offset);
 
     canvas.drawCircle(
-        pos, 10, Paint()..color = Color.fromARGB(190, 72, 44, 130));
+        pos, 10, Paint()..color = Color.fromARGB(220, 72, 44, 130));
     canvas.drawCircle(
         pos,
         10,
