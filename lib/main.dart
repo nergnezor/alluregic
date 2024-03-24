@@ -82,7 +82,7 @@ class MouseJointWorld extends Forge2DWorld
 
     addAll(flippers);
 
-    game.camera.viewport.add(FpsTextComponent());
+   // game.camera.viewport.add(FpsTextComponent());
 
     program = await FragmentProgram.fromAsset('shaders/bg.frag');
     shader = program.fragmentShader();
@@ -92,7 +92,7 @@ class MouseJointWorld extends Forge2DWorld
     final keyboardDetector =
         HardwareKeyboardDetector(onKeyEvent: checkKeyEvent);
     add(keyboardDetector);
-    game.camera.follow(camera, verticalOnly: true, snap: false, maxSpeed: 300);
+  //  game.camera.follow(camera, verticalOnly: true, snap: false, maxSpeed: 300);
 
     // await FlameAudio.audioCache.load('megalergik.mp3');
     // if not web
