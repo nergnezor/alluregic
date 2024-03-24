@@ -80,53 +80,17 @@ class Ball extends BodyComponent with ContactCallbacks {
   @override
   void renderCircle(Canvas canvas, Offset center, double radius) {
     if (isNoseHole) {
-      canvas.drawCircle(
-        center,
-        radius * 1.4,
-        Paint()..color = Color.fromARGB(255, 188, 87, 147),
-      );
-      canvas.drawCircle(
-        center,
-        radius * 1.2,
-        Paint()..color = Color.fromARGB(255, 64, 0, 147),
-      );
-      // Draw lines to the nose holes
-      final start = -position / 2 + Vector2(0, -2);
-      final end = position / 1.0 + Vector2(0, -2);
-      canvas.drawLine(
-        start.toOffset(),
-        end.toOffset(),
-        Paint()
-          ..color = Color.fromARGB(255, 103, 63, 169)
-          ..strokeWidth = 1
-          ..strokeCap = StrokeCap.round,
-      );
-
-      // draw a soft shaped nose half
-      // final nosePath = Path()
-      //   ..moveTo(start.x, start.y)
-      //   ..quadraticBezierTo(start.x, start.y - 1, end.x, end.y)
-      //   ..quadraticBezierTo(end.x, end.y + 1, start.x, start.y)
-      //   ..quadraticBezierTo(0, 0, 0, 0)
-      //   // ..quadraticBezierTo(start.x, start.y + 1, start.x, end.y)
-      //   // ..quadraticBezierTo(0, start.y + 1, start.x, end.y)
-      //   ..quadraticBezierTo(start.x, start.y - 1, end.x, end.y);
-
-      // Draw nose side spline
-      final nosePath = Path()
-        ..moveTo(start.x, start.y)
-        ..quadraticBezierTo(start.x, start.y, start.x, start.y)
-        ..quadraticBezierTo(end.x, end.y, end.x, end.y)
-        ..quadraticBezierTo(start.x, end.y, start.x, end.y);
-
-      canvas.drawPath(
-        nosePath,
+      canvas.drawArc(
+        Rect.fromCircle(center: center, radius: radius * 1.5),
+        0.1 * position.x + pi,
+        pi,
+        false,
         Paint()
           ..color = Color.fromARGB(255, 63, 98, 163)
-          ..style = PaintingStyle.fill,
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 0.1,
       );
     }
-    // print(sin(game.currentTime()));
     shader
       ..setFloat(0, time)
       ..setFloat(1, radius);
@@ -170,7 +134,7 @@ class Ball extends BodyComponent with ContactCallbacks {
         MouseJointWorld.timeFactor -= 0.1;
       }
     }
-    super.update(dt);
+    // super.update(dt);
   }
 
   @override
